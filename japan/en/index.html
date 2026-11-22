@@ -121,6 +121,13 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
 .item summary .rg{display:block;font-size:13px;color:var(--steel);font-weight:400}
 .item summary .pr{font-weight:700;color:var(--strap);white-space:nowrap;text-align:right}
 .item summary .pr .vat{display:block;font-size:12px;font-weight:500;color:var(--steel)}
+.item summary .pr .lbl{display:block;font-size:11px;font-weight:500;color:var(--steel)}
+.item summary .pr{font-size:17px}
+.item summary .mt{display:block;font-size:13px;color:var(--ink);font-weight:500;margin-top:2px}
+.price-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:0 0 22px}
+.price-head .rate-line{margin:0}
+.price-head .price-note{margin:0;flex:1 1 320px}
+.anchor{display:block;position:relative;top:-80px;visibility:hidden}
 .item summary .pr.none{color:var(--steel);font-weight:600}
 .item summary .chev{width:22px;height:22px;border-right:2px solid var(--steel);border-bottom:2px solid var(--steel);transform:rotate(45deg) scale(.5);transition:transform .2s}
 .item[open] summary .chev{transform:rotate(-135deg) scale(.5)}
@@ -259,8 +266,7 @@ footer p{margin:0 0 6px}
   <div class="wrap">
     <a class="brand" href="#">VINTAGETALK<small>Japan used clothing wholesale</small></a>
     <nav aria-label="Main menu">
-      <a href="#price">Today's prices</a>
-      <a href="#items">17 container types</a>
+      <a href="#items">Containers & prices</a>
       <a href="#how">How to buy</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -276,7 +282,7 @@ footer p{margin:0 0 6px}
       <h1 id="hero-title">Japanese used clothing containers,<br>chosen by region and store</h1>
       <p class="lead">Shop-return stock from 2nd STREET, HARD OFF and BOOKOFF, and general used clothing from Hokkaido and Shikoku. Buy a whole container or just the bales you need.</p>
       <div class="actions">
-        <a class="btn btn-solid" href="#price">See today's prices</a>
+        <a class="btn btn-solid" href="#items">See today's prices</a>
         <a class="btn btn-line js-kakao" href="#contact">Ask on KakaoTalk</a>
       </div>
       <p class="own">Our own vintage online shop <a class="js-shop js-shop-text" target="_blank" rel="noopener"></a> · Instagram <a class="js-insta js-insta-at" target="_blank" rel="noopener"></a></p>
@@ -296,23 +302,15 @@ footer p{margin:0 0 6px}
   </section>
 </div>
 
-<section class="block" id="price" aria-labelledby="price-title">
-  <div class="wrap">
-    <h2 id="price-title">Today's prices</h2>
-    <p class="sub">Prices include 10% VAT. They move with the yen exchange rate, so the final amount is set at the rate on the day you sign.</p>
-    <p class="rate-line" id="rate-line" hidden></p>
-    <table class="price-table">
-      <thead><tr><th scope="col">Type</th><th scope="col" class="won">Container weight</th><th scope="col" class="won">Bales</th><th scope="col" class="won">One container<br>(incl. VAT)</th><th scope="col" class="won">Per bale<br>(container purchase, incl. VAT)</th></tr></thead>
-      <tbody id="price-body"></tbody>
-    </table>
-    <p class="price-note" id="price-basis"></p>
-  </div>
-</section>
-
 <section class="block" id="items" aria-labelledby="items-title">
   <div class="wrap">
-    <h2 id="items-title">17 container types we can import</h2>
-    <p class="sub">Tap a name to see real photos, weight and port of departure.</p>
+    <span id="price" class="anchor" aria-hidden="true"></span>
+    <h2 id="items-title">17 container types and today's prices</h2>
+    <p class="sub">Tap a name to see real photos, weight and port of departure. Prices include VAT and move with the yen every day; the final amount is set at the rate on the day you sign.</p>
+    <div class="price-head">
+      <p class="rate-line" id="rate-line" hidden></p>
+      <p class="price-note" id="price-basis"></p>
+    </div>
     <div class="filters" role="group" aria-label="Filter types">
       <button type="button" data-f="all" aria-pressed="true">All 17</button>
       <button type="button" data-f="sr" aria-pressed="false">Shop return 13</button>
@@ -582,18 +580,6 @@ document.querySelectorAll(".js-kakao").forEach(e => {
   }
 });
 
-// Today's prices표
-const tbody = document.getElementById("price-body");
-const priced = ITEMS.filter(i => P[i.id]);
-tbody.innerHTML = priced.map(i => `
-  <tr>
-    <td><span class="name">${esc(i.name)}</span>${i.star ? '<span class="star">Top pick</span>' : ""}<span class="from">${esc(i.region)}</span></td>
-    <td class="won num cnt" data-label="Container weight">${esc(i.wt || i.weight || "Confirmed at shipping")}</td>
-    <td class="won num cnt" data-label="Bales">${esc(i.count || "Confirmed at shipping")}${i.bkg ? `<small class="each">each ${esc(i.bkg)}</small>` : ""}</td>
-    <td class="won num" data-label="Container (incl. VAT)">${man(P[i.id].container)}</td>
-    <td class="won num" data-label="Per bale, when buying a container">${won(P[i.id].bale)}</td>
-  </tr>`).join("") + `
-  <tr><td colspan="5">${T(`그 밖의 ${ITEMS.length - priced.length}종은 `, `Other ${ITEMS.length - priced.length} types: `)}<a class="ask-cell" href="#items">Ask for a quote</a></td></tr>`;
 const bd = window.VT_PRICES && window.VT_PRICES.basisDate;
 if (bd) {
   const [y, m, d] = bd.split("-").map(Number);
@@ -639,7 +625,10 @@ function areaSvg(on) {
 }
 function itemHtml(i) {
   const p = P[i.id];
-  const price = p ? `<span class="pr num">${man(p.container)}<small class="vat">incl. VAT</small></span>` : `<span class="pr none">Ask for a quote</span>`;
+  const price = p
+    ? `<span class="pr num"><small class="lbl">One container</small>${man(p.container)}<small class="vat">per bale ${won(p.bale)}</small></span>`
+    : `<span class="pr none">Ask for a quote</span>`;
+  const meta = [i.wt || i.weight, i.count ? "" + i.count : ""].filter(x => x && x !== "Confirmed at shipping").join("  ·  ");
   const photos = (i.photos || []).length
     ? `<div class="strip"><button type="button" class="sbtn prev" aria-label="Previous photo" hidden>‹</button><div class="photos">${i.photos.map((ph, n) => `<img src="../assets/img/${ph}.jpg" loading="lazy" draggable="false" alt="${esc(i.name)} ${T("bale photo", "bale photo")} ${n + 1}">`).join("")}</div><button type="button" class="sbtn next" aria-label="Next photo" hidden>›</button></div>`
     : `<div class="nophoto">Ask us and we will send photos.</div>`;
@@ -651,7 +640,7 @@ function itemHtml(i) {
     ["Per bale", p ? won(p.bale) + " (when buying a container)" : "Ask for a quote"]
   ];
   return `<details class="item" id="it-${i.id}">
-    <summary>${i.area ? areaSvg(i.area) : "<span></span>"}<span class="nm">${esc(i.name)}${i.star ? '<span class="star">Top pick</span>' : ""}<span class="rg">${esc(i.region)}</span></span>${price}<span class="chev" aria-hidden="true"></span></summary>
+    <summary>${i.area ? areaSvg(i.area) : "<span></span>"}<span class="nm">${esc(i.name)}${i.star ? '<span class="star">Top pick</span>' : ""}<span class="rg">${esc(i.region)}</span>${meta ? `<span class="mt num">${esc(meta)}</span>` : ""}</span>${price}<span class="chev" aria-hidden="true"></span></summary>
     <div class="body">
       <div>${photos}${i.desc ? `<p class="desc">${esc(i.desc)}</p>` : ""}</div>
       <div class="plate"><dl>${rows.map(r => `<dt>${r[0]}</dt><dd class="num">${esc(r[1])}</dd>`).join("")}</dl></div>
