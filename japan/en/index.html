@@ -97,6 +97,9 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
 .rate-line b{font-size:22px;font-weight:700}
 .rate-line span{font-size:14px;color:#FBDDEC}
 .js-rate-hero{display:block;font-size:14px;color:#FBDDEC}
+.js-rate-hero b{color:var(--hazard);font-size:19px;font-weight:700;letter-spacing:-.01em}
+.js-rate-hero span{font-size:14px;color:#FBDDEC;white-space:nowrap}
+@media (max-width:640px){.js-rate-hero b{font-size:18.7px;letter-spacing:-.03em}.js-rate-hero span{font-size:12px}}
 .price-note{font-size:14px;color:var(--steel);margin:12px 0 0}
 @media (max-width:640px){
   .price-table thead{display:none}
@@ -655,7 +658,7 @@ if (bd) {
     const line = document.getElementById("rate-line");
     line.innerHTML = T(`<span>오늘 환율</span><b class="num">100엔 = ${r}원</b><span>${m}월 ${d}일 ${esc(rt.source || "하나은행")}</span><em class="vat-chip">모든 Price incl. VAT</em>`, `<span>Today's rate</span><b class="num">¥100 = ₩${r}</b><span>${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}, KEB Hana Bank</span><em class="vat-chip">All prices incl. VAT</em>`);
     line.hidden = false;
-    document.querySelector(".js-rate-hero").textContent = T(`오늘 100엔 = ${r}원 (${m}월 ${d}일)`, `Today ¥100 = ₩${r} (${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")})`);
+    document.querySelector(".js-rate-hero").innerHTML = T(`<b class="num">오늘 100엔 = ${r}원</b> <span>(${m}월 ${d}일)</span>`, `<b class="num">Today ¥100 = ₩${r}</b> <span>(${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")})</span>`);
   }
 }
 
