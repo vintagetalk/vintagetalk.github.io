@@ -128,6 +128,9 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
 .item summary .pr{font-weight:700;color:var(--strap);white-space:nowrap;text-align:right}
 .item summary .pr .vat{display:block;font-size:12px;font-weight:500;color:var(--steel)}
 .item summary .pr .lbl{display:block;font-size:11px;font-weight:500;color:var(--steel)}
+.item summary .pr .vat-tag{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;color:var(--navy);border:1px solid var(--navy);border-radius:2px;padding:0 5px;line-height:17px}
+.vat-chip{font-style:normal;font-weight:700;font-size:13px;color:var(--navy);background:#fff;border-radius:2px;padding:1px 8px;align-self:center}
+.hero-vat{display:inline-block;margin-left:8px;font-size:12px;font-weight:700;color:var(--navy);background:#fff;border-radius:2px;padding:0 6px;vertical-align:1px}
 .item summary .pr{font-size:17px}
 .item summary .mt{display:block;font-size:13px;color:var(--ink);font-weight:500;margin-top:2px}
 .price-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:0 0 22px}
@@ -169,6 +172,54 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
   .photos img{height:260px}
   .item summary{grid-template-columns:auto 1fr auto;gap:10px}
   .item summary .chev{display:none}
+}
+
+/* 휴대폰 여백 다듬기 (11/22) */
+@media (max-width:640px){
+  :root{--gutter:20px}
+  body{line-height:1.7}
+  .hero{gap:30px;padding:16px 0 48px}
+  .hero figure img{aspect-ratio:4/5}
+  .hero figcaption{margin-top:10px}
+  .hero h1{margin-bottom:18px}
+  .hero p.lead{font-size:17px;margin-bottom:26px}
+  .hero .actions{gap:10px;margin-bottom:18px}
+  .hero .actions .btn{flex:1 1 140px}
+  .hero .own{margin-bottom:32px;line-height:1.8}
+  .plate{padding:6px 18px}
+  .plate dl{column-gap:18px}
+  .plate dt,.plate dd{padding:13px 0}
+  section.block{padding:56px 0}
+  section.block h2{margin-bottom:10px}
+  section.block .sub{margin-bottom:24px}
+  .price-head{display:block;margin-bottom:26px}
+  .price-head .rate-line{display:flex;width:100%;padding:14px 16px;gap:6px 12px}
+  .price-head .price-note{margin-top:12px;line-height:1.7}
+  .filters{gap:8px;margin-bottom:28px}
+  .filters button{flex:1 1 auto}
+  .legend{margin:-14px 0 28px;line-height:1.7}
+  .group{margin-bottom:44px}
+  .group .gnote{margin-bottom:14px}
+  .item summary{grid-template-columns:44px minmax(0,1fr);grid-template-areas:"map nm" "map pr";gap:0 14px;align-items:start;padding:20px 16px 18px}
+  .item summary > :first-child{grid-area:map;margin-top:2px}
+  .item summary .jmap{width:44px;height:44px}
+  .item summary .nm{grid-area:nm;font-size:17px;line-height:1.45}
+  .item summary .rg{margin-top:4px}
+  .item summary .mt{margin-top:2px}
+  .item summary .pr,.item summary .pr.none{grid-area:pr;text-align:left;white-space:normal;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:19px}
+  .item summary .pr.none{font-size:16px}
+  .item summary .pr .lbl{display:inline;font-size:13px}
+  .item summary .pr .lbl{order:-1}
+  .item summary .pr .vat{display:inline;font-size:13px}
+  .item summary .pr .vat-tag{margin-top:0}
+  .item .body{padding:0 16px 22px;gap:18px}
+  .how{gap:36px}
+  .how li,.pick li{padding-bottom:20px}
+  .faq summary{padding:18px 0}
+  .map-info{padding:24px 20px 26px;gap:20px}
+  #visit .sub{margin-bottom:22px}
+  .contact{gap:32px}
+  #contact{padding:56px 0 80px}
 }
 
 /* 사는 방법 */
@@ -296,13 +347,13 @@ footer p{margin:0 0 6px}
         <dl>
           <dt>단위</dt><dd>40ft 컨테이너 한 대, 베일, 베일(짝) 작업</dd>
           <dt>무게</dt><dd class="num">컨테이너 한 대 약 23~26톤</dd>
-          <dt>가격</dt><dd>매일 하나은행 환율로 다시 계산<span class="js-rate-hero"></span></dd>
+          <dt>가격</dt><dd>매일 하나은행 환율로 다시 계산<span class="js-rate-hero"></span><span class="hero-vat">부가세 포함</span></dd>
           <dt>도착</dt><dd>일본 출하 후 약 4주, 인천항</dd>
         </dl>
       </div>
     </div>
     <figure>
-      <img src="assets/img/hero.jpg" width="960" height="1280" alt="문이 열린 파란 40ft 컨테이너 안에 헌옷 베일이 3단으로 가득 실려 있는 모습">
+      <img src="assets/img/hero-container.jpg" width="960" height="1280" fetchpriority="high" alt="컨테이너 안에 헌옷 베일이 3단으로 빈틈없이 실려 있는 모습">
       <figcaption>홋카이도 일반 원료를 실은 40ft 컨테이너</figcaption>
     </figure>
   </section>
@@ -537,7 +588,7 @@ const ITEMS = [
   { id:"mix-okinawa", area:"okinawa", g:"mix", name:"샵리턴 MIX 오키나와(나하)", region:"오키나와" },
   { id:"hokkaido", area:"hokkaido", g:"gen", name:"홋카이도(삿포로) 일반 원료", region:"홋카이도",
     weight:"약 24,300kg", bale:"약 370kg (120×110×80cm)", count:"66개", bkg:"약 370kg", port:"도마코마이항",
-    photos:["hero","hk-1","hk-2","hk-3"],
+    photos:["hk-2","hk-1","hk-3"],
     desc:"모두 실내에서 회수하고 대부분 사람이 직접 받는 원료라 쓰레기가 적습니다. 브랜드 옷을 미리 빼내지 않습니다." },
   { id:"shikoku", area:"shikoku", g:"gen", name:"시코쿠(마쓰야마) 일반 원료", region:"에히메",
     weight:"약 26,000kg", bale:"약 220kg", count:"약 118개", bkg:"약 220kg", port:"마쓰야마항",
@@ -598,7 +649,7 @@ if (bd) {
   if (rt && rt.jpy100) {
     const r = rt.jpy100.toLocaleString(T("ko-KR", "en-US"), { minimumFractionDigits: 2 });
     const line = document.getElementById("rate-line");
-    line.innerHTML = T(`<span>오늘 환율</span><b class="num">100엔 = ${r}원</b><span>${m}월 ${d}일 ${esc(rt.source || "하나은행")}</span>`, `<span>Today's rate</span><b class="num">¥100 = ₩${r}</b><span>${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}, KEB Hana Bank</span>`);
+    line.innerHTML = T(`<span>오늘 환율</span><b class="num">100엔 = ${r}원</b><span>${m}월 ${d}일 ${esc(rt.source || "하나은행")}</span><em class="vat-chip">모든 가격 부가세 포함</em>`, `<span>Today's rate</span><b class="num">¥100 = ₩${r}</b><span>${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}, KEB Hana Bank</span><em class="vat-chip">All prices incl. VAT</em>`);
     line.hidden = false;
     document.querySelector(".js-rate-hero").textContent = T(`오늘 100엔 = ${r}원 (${m}월 ${d}일)`, `Today ¥100 = ₩${r} (${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")})`);
   }
@@ -636,7 +687,7 @@ function areaSvg(on) {
 function itemHtml(i) {
   const p = P[i.id];
   const price = p
-    ? `<span class="pr num"><small class="lbl">컨테이너 한 대</small>${man(p.container)}<small class="vat">베일 1개 ${won(p.bale)}</small></span>`
+    ? `<span class="pr num"><small class="lbl">컨테이너 한 대</small>${man(p.container)}<small class="vat">베일 1개 ${won(p.bale)}</small><small class="vat-tag">${T("부가세 포함", "incl. VAT")}</small></span>`
     : `<span class="pr none">견적 문의</span>`;
   const meta = [i.wt || i.weight, i.count ? "베일 " + i.count : ""].filter(x => x && x !== "출하 때 확정").join("  ·  ");
   const photos = (i.photos || []).length
@@ -647,7 +698,7 @@ function itemHtml(i) {
     ["베일 수량", i.count || "출하 때 확정"],
     ["출발", i.port || "견적 때 안내"],
     ["컨테이너", p ? man(p.container) + " (부가세 포함)" : "견적 문의"],
-    ["베일 1개 값", p ? won(p.bale) + " (컨테이너로 살 때)" : "견적 문의"]
+    ["베일 1개 값", p ? won(p.bale) + T(" (컨테이너로 살 때, 부가세 포함)", " (when buying a container, incl. VAT)") : "견적 문의"]
   ];
   return `<details class="item" id="it-${i.id}">
     <summary>${i.area ? areaSvg(i.area) : "<span></span>"}<span class="nm">${esc(i.name)}${i.star ? '<span class="star">추천</span>' : ""}${(i.photos || []).length ? `<span class="pic"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M5.6 2.5 4.7 4H2.5A1.5 1.5 0 0 0 1 5.5v7A1.5 1.5 0 0 0 2.5 14h11a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 13.5 4h-2.2l-.9-1.5zM8 6a3 3 0 1 1 0 6 3 3 0 0 1 0-6m0 1.4a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2"/></svg>${T("사진", "Photos")}</span>` : ""}<span class="rg">${esc(i.region)}</span>${meta ? `<span class="mt num">${esc(meta)}</span>` : ""}</span>${price}<span class="chev" aria-hidden="true"></span></summary>
