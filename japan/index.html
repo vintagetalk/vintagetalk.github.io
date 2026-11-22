@@ -162,11 +162,17 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
 .how{display:grid;grid-template-columns:1fr 1fr;gap:40px}
 .how h3{font-size:20px;margin:0 0 4px}
 .how .hsub{color:var(--steel);font-size:15px;margin:0 0 16px}
-.how ol{margin:0;padding:0;list-style:none;counter-reset:s}
-.how li{counter-increment:s;position:relative;padding:0 0 18px 44px}
-.how li::before{content:counter(s);position:absolute;left:0;top:0;width:30px;height:30px;border:2px solid var(--navy);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
-.how li b{display:block}
-.how li span{color:var(--steel);font-size:15px}
+.how ol,.pick ol{margin:0;padding:0;list-style:none;counter-reset:s}
+.how li,.pick li{counter-increment:s;position:relative;padding:0 0 18px 44px}
+.how li::before,.pick li::before{content:counter(s);position:absolute;left:0;top:0;width:30px;height:30px;border:2px solid var(--navy);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.how li b,.pick li b{display:block}
+.how li span,.pick li span{color:var(--steel);font-size:15px}
+.pick{margin-top:40px;padding:28px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:3px}
+.pick h3{font-size:20px;margin:0 0 4px}
+.pick h3 span{font-size:15px;font-weight:500;color:var(--steel);margin-left:6px}
+.pick ol{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.pick li{padding-bottom:0}
+@media (max-width:820px){.pick{padding:20px}.pick ol{grid-template-columns:1fr;gap:4px}.pick li{padding-bottom:14px}}
 @media (max-width:820px){.how{grid-template-columns:1fr;gap:28px}}
 
 /* 원료 기준 */
@@ -174,9 +180,11 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
 .facts div{padding:20px 24px 20px 0;border-bottom:1px solid var(--line)}
 .facts h3{font-size:17px;margin:0 0 6px}
 .facts p{margin:0;color:var(--steel);font-size:15px}
-.photo-row{display:block;margin-top:28px;max-width:860px}
-.photo-row img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 38%;border-radius:2px}
-@media (max-width:640px){.facts{grid-template-columns:1fr}.photo-row img{aspect-ratio:4/3}}
+.q-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:36px;align-items:start}
+.q-grid .facts{grid-template-columns:1fr}
+.photo-row{margin:0}
+.photo-row img{width:100%;height:auto;border-radius:2px}
+@media (max-width:820px){.q-grid{grid-template-columns:1fr;gap:24px}}
 
 /* 자주 묻는 질문 */
 .faq details{border-bottom:1px solid var(--line)}
@@ -193,6 +201,11 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
 .map-wrap h3{font-size:20px;margin:0 0 4px}
 .map-addr{font-size:18px;font-weight:600;color:var(--ink);margin:6px 0 16px}
 .map{display:block;width:100%;height:380px;border:1px solid var(--line);border-radius:2px;background:#E4E8E6}
+.map-addr small{display:block;font-size:15px;font-weight:500;color:var(--steel);margin-top:2px}
+.map-img{display:block;max-width:860px;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.map-img img{width:100%;height:auto}
+.map-img:hover{border-color:var(--navy)}
+.map-src{font-size:13px;color:var(--steel);margin:8px 0 16px}
 .map-links{display:flex;flex-wrap:wrap;gap:10px}
 .map-links .map-main{min-height:52px;padding:0 26px;font-size:16px}
 @media (max-width:640px){.map{height:300px}}
@@ -249,7 +262,7 @@ footer p{margin:0 0 6px}
       <p class="own">직접 운영하는 빈티지 쇼핑몰 <a class="js-shop js-shop-text" target="_blank" rel="noopener"></a> · 인스타그램 <a class="js-insta js-insta-at" target="_blank" rel="noopener"></a></p>
       <div class="plate">
         <dl>
-          <dt>단위</dt><dd>40ft 컨테이너 한 대, 또는 베일</dd>
+          <dt>단위</dt><dd>40ft 컨테이너 한 대, 베일, 베일(짝) 작업</dd>
           <dt>무게</dt><dd class="num">컨테이너 한 대 약 23~26톤</dd>
           <dt>가격</dt><dd>매일 하나은행 환율로 다시 계산<span class="js-rate-hero"></span></dd>
           <dt>도착</dt><dd>일본 출하 후 약 4주, 인천항</dd>
@@ -294,7 +307,7 @@ footer p{margin:0 0 6px}
 <section class="block" id="how" aria-labelledby="how-title">
   <div class="wrap">
     <h2 id="how-title">구매 방법</h2>
-    <p class="sub">컨테이너 한 대를 통째로 들여올 수도 있고, 창고에 있는 베일을 원하는 만큼 살 수도 있습니다.</p>
+    <p class="sub">컨테이너 한 대를 통째로 들여올 수도 있고, 창고에 있는 베일을 원하는 만큼 사거나 베일을 뜯어 골라 가실 수도 있습니다.</p>
     <div class="how">
       <div>
         <h3>컨테이너 구매</h3>
@@ -317,6 +330,18 @@ footer p{margin:0 0 6px}
         </ol>
       </div>
     </div>
+    <div class="pick">
+      <div class="pick-head">
+        <h3>베일(짝) 작업 <span>베일을 뜯어 원하는 옷만 골라 가기</span></h3>
+        <p class="hsub">베일을 통째로 사지 않아도 됩니다. 창고에서 베일을 뜯어, 매장에 맞는 옷만 골라 가실 수 있습니다.</p>
+      </div>
+      <ol>
+        <li><b>예약</b><span>카톡이나 전화로 작업 날짜를 정합니다. 그때 들어와 있는 베일과 작업비를 알려 드립니다.</span></li>
+        <li><b>베일 작업비 결제</b><span>작업비는 베일마다 다르고, 베일이 들어올 때 정해 알려 드립니다.</span></li>
+        <li><b>약 10% 골라 가기</b><span>베일 1개에서 입고 무게의 약 10%까지 원하는 옷을 골라 가십니다. 370kg 베일이면 약 37kg입니다. 남은 옷은 가져가실 수 없습니다.</span></li>
+        <li><b>더 가져가실 때</b><span>정해진 무게를 넘는 양은 1kg마다 추가금을 받습니다.</span></li>
+      </ol>
+    </div>
   </div>
 </section>
 
@@ -324,6 +349,7 @@ footer p{margin:0 0 6px}
   <div class="wrap">
     <h2 id="quality-title">원료 고르는 기준</h2>
     <p class="sub">빈티지톡은 일본 헌옷을 직접 들여와 직접 운영하는 쇼핑몰 <a class="js-shop js-shop-text" target="_blank" rel="noopener"></a>에서 팔고 있습니다. 우리 매장에서 팔아 본 원료만 소개합니다.</p>
+    <div class="q-grid">
     <div class="facts">
       <div><h3>골라내지 않은 원료</h3><p>일반 헌옷 원료는 브랜드 옷을 미리 빼내지 않고 회수한 그대로 보냅니다.</p></div>
       <div><h3>실내에서 받은 옷</h3><p>홋카이도 원료는 눈 때문에 모두 실내에서 회수하고, 대부분 사람이 직접 받습니다. 그래서 쓰레기가 적습니다.</p></div>
@@ -331,7 +357,8 @@ footer p{margin:0 0 6px}
       <div><h3>옷 위주 컨테이너만</h3><p>국내 통관이 어려운 잡화가 많은 컨테이너는 다루지 않습니다.</p></div>
     </div>
     <div class="photo-row">
-      <img src="assets/img/hk-2.jpg" width="960" height="1280" loading="lazy" alt="검은 끈으로 묶은 홋카이도 원료 베일을 쌓은 컨테이너 안쪽">
+      <img src="assets/img/hk-2-wide.jpg" width="932" height="1057" loading="lazy" alt="검은 끈으로 묶은 홋카이도 원료 베일을 쌓은 컨테이너 안쪽">
+    </div>
     </div>
   </div>
 </section>
@@ -343,6 +370,7 @@ footer p{margin:0 0 6px}
     <details><summary>세금계산서를 받을 수 있나요?</summary><p>네. 표시된 가격은 부가세 포함이고, 세금계산서를 발행합니다.</p></details>
     <details><summary>주문하면 언제 받을 수 있나요?</summary><p>컨테이너는 일본에서 출하한 뒤 보통 4주쯤 걸려 인천항에 도착합니다. 날씨나 항구 사정으로 늦어질 때가 있습니다. 창고에 있는 베일은 바로 가져가실 수 있습니다.</p></details>
     <details><summary>가격이 「견적 문의」로 나오는 원료는요?</summary><p>그때그때 일본 현지에 가격과 출하 일정을 확인해서 알려 드립니다. 입찰로 가격이 정해지는 원료도 있습니다.</p></details>
+    <details><summary>베일을 뜯어서 일부만 살 수 있나요?</summary><p>네, 베일(짝) 작업으로 가능합니다. 예약하신 날 베일 작업비를 내시면 베일 1개를 뜯어 입고 무게의 약 10%까지 원하는 옷을 골라 가실 수 있습니다. 그보다 더 가져가시면 1kg마다 추가금을 받습니다. 작업비와 추가금은 베일이 들어올 때 정해 알려 드립니다.</p></details>
     <details><summary>사진을 더 볼 수 있나요?</summary><p>카톡이나 이메일로 문의하시면 원료별로 가지고 있는 사진과 영상을 보내 드립니다.</p></details>
   </div>
 </section>
@@ -375,7 +403,9 @@ footer p{margin:0 0 6px}
   </div>
   <div class="wrap map-wrap">
     <h3>창고 오시는 길</h3>
-    <p class="map-addr js-wh"></p>
+    <p class="map-addr"><span class="js-wh"></span><small class="js-wh-road"></small></p>
+    <a class="map-img" id="map-img" target="_blank" rel="noopener"><img src="assets/img/warehouse-map.jpg" width="855" height="550" loading="lazy" alt="네이버 지도에 표시한 양주 창고 위치 (도하리 93-12)"></a>
+    <p class="map-src">지도: 네이버 지도. 누르면 네이버 지도가 열립니다.</p>
     <div class="map-links">
       <a class="btn btn-solid map-main" id="map-naver" target="_blank" rel="noopener">네이버 지도로 보기</a>
       <a class="btn btn-line" id="map-kakao" target="_blank" rel="noopener">카카오맵으로 보기</a>
@@ -420,7 +450,9 @@ const SITE = {
   addr: "경기도 남양주시 순화궁로 272 동광비즈타워 지하1층 127호",   // 사무실 (별내)
   warehouse: "경기도 양주시 은현면 도하리 93-12",
   addrEn: "B1-127, Donggwang Biz Tower, 272 Sunhwagung-ro, Namyangju-si, Gyeonggi-do, Korea",
-  warehouseEn: "93-12 Doha-ri, Eunhyeon-myeon, Yangju-si, Gyeonggi-do, Korea",          // 창고
+  warehouseEn: "93-12 Doha-ri, Eunhyeon-myeon, Yangju-si, Gyeonggi-do, Korea",
+  warehouseRoad: "경기도 양주시 은현면 그루고개로466번길 13-63",
+  warehouseRoadEn: "13-63 Gurugogae-ro 466beon-gil, Eunhyeon-myeon, Yangju-si, Gyeonggi-do",          // 창고
   kakao: "https://open.kakao.com/o/sXKZvbYi",   // 1:1 오픈채팅 (사장님 개인 카톡으로 옴, 11/22)
   instagram: "vintagetalk.co.kr",   // 인스타그램 아이디 (도매도 이 계정으로 통합)
   shop: "vintagetalk.co.kr",        // 직접 운영하는 쇼핑몰
@@ -500,6 +532,8 @@ document.querySelectorAll(".js-addr").forEach(e => e.textContent = T(SITE.addr, 
 document.querySelectorAll(".js-wh").forEach(e => e.textContent = T(SITE.warehouse, SITE.warehouseEn));
 const whq = encodeURIComponent(SITE.warehouse);
 document.getElementById("map-naver").href = "https://map.naver.com/p/search/" + whq;
+document.getElementById("map-img").href = "https://map.naver.com/p/search/" + whq;
+document.querySelectorAll(".js-wh-road").forEach(e => e.textContent = T("도로명 ", "Road address: ") + T(SITE.warehouseRoad, SITE.warehouseRoadEn));
 document.getElementById("map-kakao").href = "https://map.kakao.com/link/search/" + whq;
 document.getElementById("map-google").href = "https://www.google.com/maps/search/?api=1&query=" + whq;
 document.querySelectorAll(".js-tel").forEach(e => e.href = telHref);
