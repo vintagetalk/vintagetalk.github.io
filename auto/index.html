@@ -35,7 +35,7 @@
     <button role="tab" id="tAuto" aria-controls="pAuto" aria-selected="false">쇼핑몰 자동화</button>
     <button role="tab" id="tPick" aria-controls="pPick" aria-selected="false">배송관리</button>
     <span class="sp"></span>
-    <a id="admin" href="#" target="_blank" rel="noopener" hidden>사장님 설정</a>
+    <a id="admin" href="#" target="_blank" rel="noopener" hidden>새 탭에서 열기</a>
   </nav>
   <div class="panes">
     <iframe id="pBright" role="tabpanel" aria-labelledby="tBright" title="사진 밝기 조절" src="brightness.html" allow="clipboard-read; clipboard-write"></iframe>
@@ -48,7 +48,7 @@
     var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'] };
     var srcs = { auto: exec, pick: exec + '?page=pick&set=talk' };
     var admin = document.getElementById('admin');
-    admin.href = exec + '?page=admin';
+    admin.href = exec;   // 사장님 설정은 자동화 화면에 합쳐짐 — 바깥 창에서 열면 사장님 계정이 확실히 잡힘
     function show(name) {
       Object.keys(tabs).forEach(function (k) {
         var on = k === name;
