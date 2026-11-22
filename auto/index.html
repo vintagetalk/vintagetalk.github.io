@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1f1f1f">
+<title>빈티지 작업실</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%232E2E2E'/%3E%3Cpath d='M32 12a20 20 0 0 1 0 40z' fill='%23FFC83D'/%3E%3Cpath d='M32 12a20 20 0 0 0 0 40z' fill='%23626262'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23F3F3F3' stroke-width='4'/%3E%3C/svg%3E">
+<style>
+  :root { --bar:#1f1f1f; --line:#3a3a3a; --text:#f3f3f3; --sub:#a9a9a9; --accent:#ffc83d; --ink:#1c1c1c;
+    --ui:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #242424; color: var(--text); font-family: var(--ui); }
+  body { display: grid; grid-template-rows: auto 1fr; height: 100vh; height: 100dvh; overflow: hidden; }
+  nav { display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--bar); border-bottom: 1px solid var(--line); }
+  nav button { font: inherit; font-size: 14px; color: var(--sub); background: transparent; border: 1px solid transparent;
+    border-radius: 7px; padding: 7px 14px; cursor: pointer; white-space: nowrap; }
+  nav button:hover { color: var(--text); background: #2c2c2c; }
+  nav button[aria-selected="true"] { color: var(--ink); background: var(--accent); border-color: var(--accent); font-weight: 700; }
+  nav button:focus-visible, nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  nav .sp { flex: 1; }
+  nav a { color: var(--sub); font-size: 13px; text-decoration: none; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; white-space: nowrap; }
+  nav a:hover { color: var(--text); border-color: #5a5a5a; }
+  nav a[hidden] { display: none; }
+  .panes { position: relative; min-height: 0; }
+  iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+  #pBright { background: #242424; }
+  iframe[hidden] { display: none; }
+</style>
+</head>
+<body>
+  <nav role="tablist" aria-label="작업 고르기">
+    <button role="tab" id="tBright" aria-controls="pBright" aria-selected="true">사진 밝기 조절</button>
+    <button role="tab" id="tAuto" aria-controls="pAuto" aria-selected="false">쇼핑몰 자동화</button>
+    <span class="sp"></span>
+    <a id="admin" href="#" target="_blank" rel="noopener" hidden>사장님 설정</a>
+  </nav>
+  <div class="panes">
+    <iframe id="pBright" role="tabpanel" aria-labelledby="tBright" title="사진 밝기 조절" src="brightness.html" allow="clipboard-read; clipboard-write"></iframe>
+    <iframe id="pAuto" role="tabpanel" aria-labelledby="tAuto" title="쇼핑몰 자동화" hidden allow="clipboard-write"></iframe>
+  </div>
+  <script>
+  (function () {
+    var exec = 'https:' + '//script.google.com/macros/s/AKfycby66qcbuyVKL0YjL21isQXYAe1yDkkSvnC5s59N7GGKDnTcVqIcs2xHwIenG7NlDbydPg/exec';
+    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'] };
+    var admin = document.getElementById('admin');
+    admin.href = exec + '?page=admin';
+    function show(name) {
+      Object.keys(tabs).forEach(function (k) {
+        var on = k === name;
+        document.getElementById(tabs[k][0]).setAttribute('aria-selected', on ? 'true' : 'false');
+        document.getElementById(tabs[k][1]).hidden = !on;
+      });
+      var pa = document.getElementById('pAuto');
+      if (name === 'auto' && !pa.getAttribute('src')) pa.src = exec;
+      admin.hidden = name !== 'auto';
+      var h = name === 'auto' ? '#auto' : '';
+      if (location.hash !== h) history.replaceState(null, '', location.pathname + location.search + h);
+      var f = document.getElementById(tabs[name][1]);
+      try { f.focus(); } catch (e) {}
+    }
+    document.getElementById('tBright').onclick = function () { show('bright'); };
+    document.getElementById('tAuto').onclick = function () { show('auto'); };
+    show(location.hash === '#auto' ? 'auto' : 'bright');
+  })();
+  </script>
+</body>
+</html>
