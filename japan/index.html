@@ -386,7 +386,7 @@ footer p{margin:0 0 6px}
 <section class="block" id="how" aria-labelledby="how-title">
   <div class="wrap">
     <h2 id="how-title">구매 방법</h2>
-    <p class="sub">컨테이너 한 대를 통째로 들여올 수도 있고, 창고에 있는 베일을 원하는 만큼 사거나 베일을 뜯어 골라 가실 수도 있습니다.</p>
+    <p class="sub">컨테이너 한 대를 통째로 들여올 수도 있고, 창고에 있는 베일을 원하는 만큼 사 가시거나, 베일(짝) 작업으로 원하는 옷만 골라 가실 수도 있습니다.</p>
     <div class="how">
       <div>
         <h3>컨테이너 구매</h3>
@@ -396,12 +396,12 @@ footer p{margin:0 0 6px}
           <li><b>출하일 정하기</b><span>종류마다 매달 정해진 출하일이 있습니다.</span></li>
           <li><b>계약과 결제</b><span>계약하는 날 환율로 금액을 정하고 세금계산서를 드립니다.</span></li>
           <li><b>일본 출하 후 약 4주</b><span>인천항에 도착하면 통관을 진행합니다.</span></li>
-          <li><b>받을 곳으로 배송</b><span>양주 창고까지 배송 기준 가격이며, 다른 곳으로 받으시면 운송비를 따로 알려 드립니다.</span></li>
+          <li><b>받을 곳으로 배송</b><span>경기도 양주 창고까지 배송 기준 가격이며, 다른 곳으로 받으시면 운송비를 따로 알려 드립니다.</span></li>
         </ol>
       </div>
       <div>
         <h3>베일 구매</h3>
-        <p class="hsub">컨테이너를 통째로 사는 것과는 다릅니다. 양주 창고에 들어와 있는 베일을 원하는 개수만큼 사는 방식이라, 가격도 컨테이너와 따로 정해 견적을 드립니다.</p>
+        <p class="hsub">컨테이너를 통째로 사는 것과는 다릅니다. 경기도 양주 창고에 들어와 있는 베일을 원하는 개수만큼 사는 방식이라, 가격도 컨테이너와 따로 정해 견적을 드립니다.</p>
         <ol>
           <li><b>창고에 있는 원료 확인</b><span>지금 있는 종류와 개수를 카톡이나 전화로 알려 드립니다.</span></li>
           <li><b>개수 정하고 견적</b><span>베일 낱개 가격은 컨테이너 가격과 별도입니다. 원하시는 원료와 개수를 알려 주시면 견적을 드립니다.</span></li>
@@ -471,7 +471,7 @@ footer p{margin:0 0 6px}
           <a class="btn btn-line" id="map-google" target="_blank" rel="noopener">구글 지도로 보기</a>
         </div>
       </div>
-      <a class="map-img" id="map-img" target="_blank" rel="noopener" aria-label="네이버 지도에서 창고 위치 열기"><img src="assets/img/warehouse-map.jpg" width="855" height="550" loading="lazy" alt="네이버 지도에 표시한 양주 창고 위치 (도하리 93-12)"></a>
+      <a class="map-img" id="map-img" target="_blank" rel="noopener" aria-label="네이버 지도에서 창고 위치 열기"><img src="assets/img/warehouse-map.jpg" width="855" height="550" loading="lazy" alt="네이버 지도에 표시한 경기도 양주 창고 위치 (도하리 93-12)"></a>
     </div>
     <p class="map-src">지도: 네이버 지도. 누르면 네이버 지도가 열립니다.</p>
   </div>
@@ -691,7 +691,7 @@ function areaSvg(on) {
 function itemHtml(i) {
   const p = P[i.id];
   const price = p
-    ? `<span class="pr num"><small class="lbl">컨테이너 한 대</small>${man(p.container)}<small class="vat">베일 1개 ${won(p.bale)}</small><small class="vat-tag">${T("부가세 포함", "incl. VAT")}</small></span>`
+    ? `<span class="pr num"><small class="lbl">컨테이너 한 대</small>${man(p.container)}<small class="vat">${(bk => T(`베일 1개${bk ? `(${bk})` : ""} ${won(p.bale)}`, `per bale${bk ? ` (${bk})` : ""} ${won(p.bale)}`))((i.bkg || "").replace(/^(약|approx\.) /, ""))}</small><small class="vat-tag">${T("부가세 포함", "incl. VAT")}</small></span>`
     : `<span class="pr none">견적 문의</span>`;
   const bw = i.bkg ? (i.count ? T("1개 " + i.bkg, i.bkg + " each") : T("베일 1개 " + i.bkg, i.bkg + " per bale")) : "";
   const meta = [i.wt || i.weight, i.count ? "베일 " + i.count : "", bw].filter(x => x && x !== "출하 때 확정").join("  ·  ");
