@@ -2,6 +2,15 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<script>
+/* 1.2: 카페24 로그인(권한 허용) 뒤 이 주소로 돌아오면 쇼핑몰 자동화 웹앱으로 바로 넘김 */
+(function () {
+  var q = location.search;
+  if (/[?&]code=/.test(q) && /[?&]state=/.test(q)) {
+    location.replace('https:' + '//script.google.com/macros/s/AKfycby66qcbuyVKL0YjL21isQXYAe1yDkkSvnC5s59N7GGKDnTcVqIcs2xHwIenG7NlDbydPg/exec' + q);
+  }
+})();
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#303030">
@@ -141,7 +150,7 @@ body.single #strip{visibility:hidden}
 <script>
 'use strict';
 (function () {
-const VERSION = '1.1';
+const VERSION = '1.2';
 
 // ===== 계산: 2026-11-21 사장님 컴퓨터 포토샵 CC 2018에서 잰 값 (PC 프로그램과 같음) =====
 // 명도 = 「명도/대비」 명도(레거시 아님) 잰 표, 대비 = 입력 + 대비×G[입력], 밝기 = 「색조/채도」 밝기
