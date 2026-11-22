@@ -33,17 +33,20 @@
   <nav role="tablist" aria-label="작업 고르기">
     <button role="tab" id="tBright" aria-controls="pBright" aria-selected="true">사진 밝기 조절</button>
     <button role="tab" id="tAuto" aria-controls="pAuto" aria-selected="false">쇼핑몰 자동화</button>
+    <button role="tab" id="tPick" aria-controls="pPick" aria-selected="false">찾는 목록</button>
     <span class="sp"></span>
     <a id="admin" href="#" target="_blank" rel="noopener" hidden>사장님 설정</a>
   </nav>
   <div class="panes">
     <iframe id="pBright" role="tabpanel" aria-labelledby="tBright" title="사진 밝기 조절" src="brightness.html" allow="clipboard-read; clipboard-write"></iframe>
     <iframe id="pAuto" role="tabpanel" aria-labelledby="tAuto" title="쇼핑몰 자동화" hidden allow="clipboard-write"></iframe>
+    <iframe id="pPick" role="tabpanel" aria-labelledby="tPick" title="찾는 목록" hidden></iframe>
   </div>
   <script>
   (function () {
     var exec = 'https:' + '//script.google.com/macros/s/AKfycby66qcbuyVKL0YjL21isQXYAe1yDkkSvnC5s59N7GGKDnTcVqIcs2xHwIenG7NlDbydPg/exec';
-    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'] };
+    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'] };
+    var srcs = { auto: exec, pick: exec + '?page=pick&set=talk' };
     var admin = document.getElementById('admin');
     admin.href = exec + '?page=admin';
     function show(name) {
@@ -52,17 +55,19 @@
         document.getElementById(tabs[k][0]).setAttribute('aria-selected', on ? 'true' : 'false');
         document.getElementById(tabs[k][1]).hidden = !on;
       });
-      var pa = document.getElementById('pAuto');
-      if (name === 'auto' && !pa.getAttribute('src')) pa.src = exec;
+      var fr = document.getElementById(tabs[name][1]);
+      if (srcs[name] && !fr.getAttribute('src')) fr.src = srcs[name];
       admin.hidden = name !== 'auto';
-      var h = name === 'auto' ? '#auto' : '';
+      var h = name === 'bright' ? '' : '#' + name;
       if (location.hash !== h) history.replaceState(null, '', location.pathname + location.search + h);
       var f = document.getElementById(tabs[name][1]);
       try { f.focus(); } catch (e) {}
     }
     document.getElementById('tBright').onclick = function () { show('bright'); };
     document.getElementById('tAuto').onclick = function () { show('auto'); };
-    show(location.hash === '#auto' ? 'auto' : 'bright');
+    document.getElementById('tPick').onclick = function () { show('pick'); };
+    var start = location.hash.slice(1);
+    show(tabs[start] ? start : 'bright');
   })();
   </script>
 </body>
