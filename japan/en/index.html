@@ -128,6 +128,9 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
 .item summary .pr{font-weight:700;color:var(--strap);white-space:nowrap;text-align:right}
 .item summary .pr .vat{display:block;font-size:12px;font-weight:500;color:var(--steel)}
 .item summary .pr .lbl{display:block;font-size:11px;font-weight:500;color:var(--steel)}
+.item summary .pr .vat-tag{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;color:var(--navy);border:1px solid var(--navy);border-radius:2px;padding:0 5px;line-height:17px}
+.vat-chip{font-style:normal;font-weight:700;font-size:13px;color:var(--navy);background:#fff;border-radius:2px;padding:1px 8px;align-self:center}
+.hero-vat{display:inline-block;margin-left:8px;font-size:12px;font-weight:700;color:var(--navy);background:#fff;border-radius:2px;padding:0 6px;vertical-align:1px}
 .item summary .pr{font-size:17px}
 .item summary .mt{display:block;font-size:13px;color:var(--ink);font-weight:500;margin-top:2px}
 .price-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:0 0 22px}
@@ -169,6 +172,54 @@ section.block .sub{color:var(--steel);margin:0 0 28px;max-width:46em}
   .photos img{height:260px}
   .item summary{grid-template-columns:auto 1fr auto;gap:10px}
   .item summary .chev{display:none}
+}
+
+/* 휴대폰 여백 다듬기 (11/22) */
+@media (max-width:640px){
+  :root{--gutter:20px}
+  body{line-height:1.7}
+  .hero{gap:30px;padding:16px 0 48px}
+  .hero figure img{aspect-ratio:4/5}
+  .hero figcaption{margin-top:10px}
+  .hero h1{margin-bottom:18px}
+  .hero p.lead{font-size:17px;margin-bottom:26px}
+  .hero .actions{gap:10px;margin-bottom:18px}
+  .hero .actions .btn{flex:1 1 140px}
+  .hero .own{margin-bottom:32px;line-height:1.8}
+  .plate{padding:6px 18px}
+  .plate dl{column-gap:18px}
+  .plate dt,.plate dd{padding:13px 0}
+  section.block{padding:56px 0}
+  section.block h2{margin-bottom:10px}
+  section.block .sub{margin-bottom:24px}
+  .price-head{display:block;margin-bottom:26px}
+  .price-head .rate-line{display:flex;width:100%;padding:14px 16px;gap:6px 12px}
+  .price-head .price-note{margin-top:12px;line-height:1.7}
+  .filters{gap:8px;margin-bottom:28px}
+  .filters button{flex:1 1 auto}
+  .legend{margin:-14px 0 28px;line-height:1.7}
+  .group{margin-bottom:44px}
+  .group .gnote{margin-bottom:14px}
+  .item summary{grid-template-columns:44px minmax(0,1fr);grid-template-areas:"map nm" "map pr";gap:0 14px;align-items:start;padding:20px 16px 18px}
+  .item summary > :first-child{grid-area:map;margin-top:2px}
+  .item summary .jmap{width:44px;height:44px}
+  .item summary .nm{grid-area:nm;font-size:17px;line-height:1.45}
+  .item summary .rg{margin-top:4px}
+  .item summary .mt{margin-top:2px}
+  .item summary .pr,.item summary .pr.none{grid-area:pr;text-align:left;white-space:normal;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:19px}
+  .item summary .pr.none{font-size:16px}
+  .item summary .pr .lbl{display:inline;font-size:13px}
+  .item summary .pr .lbl{order:-1}
+  .item summary .pr .vat{display:inline;font-size:13px}
+  .item summary .pr .vat-tag{margin-top:0}
+  .item .body{padding:0 16px 22px;gap:18px}
+  .how{gap:36px}
+  .how li,.pick li{padding-bottom:20px}
+  .faq summary{padding:18px 0}
+  .map-info{padding:24px 20px 26px;gap:20px}
+  #visit .sub{margin-bottom:22px}
+  .contact{gap:32px}
+  #contact{padding:56px 0 80px}
 }
 
 /* How to buy */
@@ -296,13 +347,13 @@ footer p{margin:0 0 6px}
         <dl>
           <dt>Unit</dt><dd>One 40ft container, bales, or bale picking</dd>
           <dt>Weight</dt><dd class="num">About 23–26 tonnes per container</dd>
-          <dt>Price</dt><dd>Recalculated daily at the KEB Hana Bank rate<span class="js-rate-hero"></span></dd>
+          <dt>Price</dt><dd>Recalculated daily at the KEB Hana Bank rate<span class="js-rate-hero"></span><span class="hero-vat">incl. VAT</span></dd>
           <dt>Arrival</dt><dd>About 4 weeks after shipping from Japan, Incheon port</dd>
         </dl>
       </div>
     </div>
     <figure>
-      <img src="../assets/img/hero.jpg" width="960" height="1280" alt="A blue 40ft container with its doors open, packed three bales high with used clothing">
+      <img src="../assets/img/hero-container.jpg" width="960" height="1280" fetchpriority="high" alt="Used-clothing bales packed three high, wall to wall, inside a container">
       <figcaption>A 40ft container of general used clothing from Hokkaido</figcaption>
     </figure>
   </section>
@@ -537,7 +588,7 @@ const ITEMS = [
   { id:"mix-okinawa", area:"okinawa", g:"mix", name:"Shop return MIX Okinawa (Naha)", region:"Okinawa" },
   { id:"hokkaido", area:"hokkaido", g:"gen", name:"Hokkaido (Sapporo) general used clothing", region:"Hokkaido",
     weight:"approx. 24,300 kg", bale:"approx. 370 kg (120×110×80 cm)", count:"66 bales", bkg:"approx. 370 kg", port:"Tomakomai port",
-    photos:["hero","hk-1","hk-2","hk-3"],
+    photos:["hk-2","hk-1","hk-3"],
     desc:"All collected indoors, mostly handed over in person, so there is little waste. Brand items are not picked out." },
   { id:"shikoku", area:"shikoku", g:"gen", name:"Shikoku (Matsuyama) general used clothing", region:"Ehime",
     weight:"approx. 26,000 kg", bale:"approx. 220 kg", count:"approx. 118 bales", bkg:"approx. 220 kg", port:"Matsuyama port",
@@ -598,7 +649,7 @@ if (bd) {
   if (rt && rt.jpy100) {
     const r = rt.jpy100.toLocaleString(T("ko-KR", "en-US"), { minimumFractionDigits: 2 });
     const line = document.getElementById("rate-line");
-    line.innerHTML = T(`<span>오늘 환율</span><b class="num">100엔 = ${r}원</b><span>${m}월 ${d}일 ${esc(rt.source || "하나은행")}</span>`, `<span>Today's rate</span><b class="num">¥100 = ₩${r}</b><span>${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}, KEB Hana Bank</span>`);
+    line.innerHTML = T(`<span>오늘 환율</span><b class="num">100엔 = ${r}원</b><span>${m}월 ${d}일 ${esc(rt.source || "하나은행")}</span><em class="vat-chip">모든 Price incl. VAT</em>`, `<span>Today's rate</span><b class="num">¥100 = ₩${r}</b><span>${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}, KEB Hana Bank</span><em class="vat-chip">All prices incl. VAT</em>`);
     line.hidden = false;
     document.querySelector(".js-rate-hero").textContent = T(`오늘 100엔 = ${r}원 (${m}월 ${d}일)`, `Today ¥100 = ₩${r} (${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")})`);
   }
@@ -636,7 +687,7 @@ function areaSvg(on) {
 function itemHtml(i) {
   const p = P[i.id];
   const price = p
-    ? `<span class="pr num"><small class="lbl">One container</small>${man(p.container)}<small class="vat">per bale ${won(p.bale)}</small></span>`
+    ? `<span class="pr num"><small class="lbl">One container</small>${man(p.container)}<small class="vat">per bale ${won(p.bale)}</small><small class="vat-tag">${T("incl. VAT", "incl. VAT")}</small></span>`
     : `<span class="pr none">Ask for a quote</span>`;
   const meta = [i.wt || i.weight, i.count ? "" + i.count : ""].filter(x => x && x !== "Confirmed at shipping").join("  ·  ");
   const photos = (i.photos || []).length
@@ -647,7 +698,7 @@ function itemHtml(i) {
     ["Bales", i.count || "Confirmed at shipping"],
     ["Departs", i.port || "Given with quote"],
     ["Container", p ? man(p.container) + " (incl. VAT)" : "Ask for a quote"],
-    ["Per bale", p ? won(p.bale) + " (when buying a container)" : "Ask for a quote"]
+    ["Per bale", p ? won(p.bale) + T(" (When buying a container, incl. VAT)", " (when buying a container, incl. VAT)") : "Ask for a quote"]
   ];
   return `<details class="item" id="it-${i.id}">
     <summary>${i.area ? areaSvg(i.area) : "<span></span>"}<span class="nm">${esc(i.name)}${i.star ? '<span class="star">Top pick</span>' : ""}${(i.photos || []).length ? `<span class="pic"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M5.6 2.5 4.7 4H2.5A1.5 1.5 0 0 0 1 5.5v7A1.5 1.5 0 0 0 2.5 14h11a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 13.5 4h-2.2l-.9-1.5zM8 6a3 3 0 1 1 0 6 3 3 0 0 1 0-6m0 1.4a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2"/></svg>${T("사진", "Photos")}</span>` : ""}<span class="rg">${esc(i.region)}</span>${meta ? `<span class="mt num">${esc(meta)}</span>` : ""}</span>${price}<span class="chev" aria-hidden="true"></span></summary>
