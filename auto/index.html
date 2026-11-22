@@ -46,7 +46,7 @@
   (function () {
     var exec = 'https:' + '//script.google.com/macros/s/AKfycby66qcbuyVKL0YjL21isQXYAe1yDkkSvnC5s59N7GGKDnTcVqIcs2xHwIenG7NlDbydPg/exec';
     var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'] };
-    var srcs = { auto: exec, pick: exec + '?page=pick&set=talk' };
+    var srcs = { auto: exec, pick: exec + '?page=pick&set=both' };   // 배송관리 탭은 '톡·플오 이어서'로 시작
     var admin = document.getElementById('admin');
     admin.href = exec;   // 사장님 설정은 자동화 화면에 합쳐짐 — 바깥 창에서 열면 사장님 계정이 확실히 잡힘
     function show(name) {
