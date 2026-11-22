@@ -359,6 +359,7 @@ footer p{margin:0 0 6px}
     <div class="map-links">
       <a class="btn btn-line" id="map-naver" target="_blank" rel="noopener">네이버 지도로 보기</a>
       <a class="btn btn-line" id="map-kakao" target="_blank" rel="noopener">카카오맵으로 보기</a>
+      <a class="btn btn-line" id="map-google" target="_blank" rel="noopener">구글 지도로 보기</a>
     </div>
   </div>
 </section>
@@ -471,6 +472,7 @@ const whq = encodeURIComponent(SITE.warehouse);
 document.getElementById("wh-map").src = "https://maps.google.com/maps?q=" + whq + "&z=15&output=embed&hl=ko";
 document.getElementById("map-naver").href = "https://map.naver.com/p/search/" + whq;
 document.getElementById("map-kakao").href = "https://map.kakao.com/link/search/" + whq;
+document.getElementById("map-google").href = "https://www.google.com/maps/search/?api=1&query=" + whq;
 document.querySelectorAll(".js-tel").forEach(e => e.href = telHref);
 document.querySelectorAll(".js-tel-text").forEach(e => e.textContent = SITE.tel);
 document.querySelectorAll(".js-mail").forEach(e => e.href = mailHref);
