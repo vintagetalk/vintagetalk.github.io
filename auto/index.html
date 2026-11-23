@@ -51,9 +51,9 @@
   <script>
   (function () {
     var exec = 'https:' + '//script.google.com/macros/s/AKfycby66qcbuyVKL0YjL21isQXYAe1yDkkSvnC5s59N7GGKDnTcVqIcs2xHwIenG7NlDbydPg/exec';
-    var editor = 'https:' + '//script.google.com/macros/s/AKfycbzrI3sc050YoILeMSAch8It6sq6ZsWTcn8mcpKX7P7mdeYN4S1U8PZeRxq53Dux3xQvhw/exec';   // 빈티지톡 디자인 편집기 웹앱(11/23 이 탭으로 합침)
+    var editor = 'editor.html';   // 빈티지톡 디자인 편집기(11/23 작업실 안으로 옮김 — 같은 폴더 editor.html)
     var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'], filter: ['tFilter', 'pFilter'], sale: ['tSale', 'pSale'], design: ['tDesign', 'pDesign'] };
-    var srcs = { auto: exec, pick: exec + '?page=pick&set=both', filter: exec + '?page=filter', sale: exec + '?page=sale', design: editor };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
+    var srcs = { auto: exec, pick: exec + '?page=pick&set=both', filter: exec + '?page=filter', sale: exec + '?page=sale', design: 'editor.html' };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
     var admin = document.getElementById('admin');
     admin.href = exec;   // 사장님 설정은 자동화 화면에 합쳐짐 — 바깥 창에서 열면 사장님 계정이 확실히 잡힘
     function show(name) {
