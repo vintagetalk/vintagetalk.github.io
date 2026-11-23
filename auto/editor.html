@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>디자인 편집기 · 빈티지 작업실</title>
 <!-- 빈티지톡 디자인 편집기(11/23 빈티지 작업실로 옮김 — 예전 '메인 편집기 (웹)' 구글 웹앱을 대신함).
-     쇼핑몰 화면 글·웹 저장은 빈티지 작업실 웹앱(아래 API)이 맡고, 편집기 코드는 빈티지톡 대표(스킨67)에 올라간 vt_hero.js 를 그대로 씀.
+     쇼핑몰 화면 글·웹 저장은 빈티지 작업실 웹앱(아래 API)이 맡고, 편집기 코드도 이 폴더의 vt_hero.js(11/23 7.3부터 작업실에 둠).
      원본: 클로드AI\카페24_자동화\auto_page\editor.html — 고치는 곳은 빈티지톡 편집기 세션 -->
 <style>
 html,body{margin:0;height:100%;font:14px "Noto Sans KR","Malgun Gothic",sans-serif;background:#222}
@@ -53,7 +53,7 @@ html,body{margin:0;height:100%;font:14px "Noto Sans KR","Malgun Gothic",sans-ser
     h = h.replace(/<html([^>]*)>/i, '<html$1 class="vth-fok">');
     var page = h.replace(/<head([^>]*)>/i, '<head$1><base href="' + info.base + '/">');
     var boot = '<script>window.__VTH_WEB={shop:' + JSON.stringify(SHOP) + ',html:' + esc(JSON.stringify(page)) + '};</' + 'script>' +
-      '<script src="' + info.editor + '"></' + 'script>';
+      '<script src="' + new URL('vt_hero.js?v=' + Date.now(), location.href).href + '"></' + 'script>';   // 7.3: 편집기 파일도 빈티지 작업실(같은 폴더 vt_hero.js)
     stage.srcdoc = page.replace(/<\/body>/i, boot + '</body>');
     stage.style.display = 'block'; document.getElementById('hello').style.display = 'none';
   }
@@ -69,7 +69,7 @@ html,body{margin:0;height:100%;font:14px "Noto Sans KR","Malgun Gothic",sans-ser
   document.getElementById('bPub').onclick = function () {
     if (!info) { say('아직 불러오는 중이에요'); return; }
     if (!(info.draft && info.draft.pc)) { say('웹에 저장된 것이 없어요. 오른쪽 아래 "웹에 저장"부터 눌러 주세요.'); return; }
-    window.open(info.base + '/?vtedit&vtdraft=web', '_blank');
+    window.open(info.base + '/?vtpub=1&vtdraft=web&vtedit=1', '_blank');   // 7.3: 반영 전용 vtpub(손님 첫 화면을 다시 저장하기 전까지 예전 줄을 위해 vtedit 도 붙임)
     say('새 탭에서 쇼핑몰 창이 웹 저장본을 불러와요. 확인하고 "카페24에 바로 저장"을 누르면 반영돼요(카페24 관리자 로그인 필요).');
   };
   window.addEventListener('message', function (e) {
