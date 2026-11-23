@@ -23,6 +23,7 @@
   nav a { color: var(--sub); font-size: 13px; text-decoration: none; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; white-space: nowrap; }
   nav a:hover { color: var(--text); border-color: #5a5a5a; }
   nav a[hidden] { display: none; }
+  nav button.setbtn { border-color: var(--line); font-size: 13px; padding: 6px 12px; }
   .panes { position: relative; min-height: 0; }
   iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
   #pBright { background: #242424; }
@@ -53,6 +54,7 @@
     <button role="tab" id="tDesign" aria-controls="pDesign" aria-selected="false">디자인 편집기</button>
     <span class="sp"></span>
     <a id="admin" href="#" target="_blank" rel="noopener" hidden>새 탭에서 열기</a>
+    <button role="tab" id="tSet" aria-controls="pSet" aria-selected="false" class="setbtn" title="연결 · 로그인 · 알림 · 비밀번호(사장님만)">⚙ 설정</button>
   </nav>
   <div class="panes">
     <iframe id="pBright" role="tabpanel" aria-labelledby="tBright" title="사진 밝기 조절" src="brightness.html" allow="clipboard-read; clipboard-write"></iframe>
@@ -62,6 +64,7 @@
     <iframe id="pSale" role="tabpanel" aria-labelledby="tSale" title="세일 관리" hidden></iframe>
     <iframe id="pConsign" role="tabpanel" aria-labelledby="tConsign" title="위탁 정산" hidden allow="clipboard-write"></iframe>
     <iframe id="pDesign" role="tabpanel" aria-labelledby="tDesign" title="디자인 편집기" hidden allow="clipboard-read; clipboard-write"></iframe>
+    <iframe id="pSet" role="tabpanel" aria-labelledby="tSet" title="설정" hidden allow="clipboard-write"></iframe>
     <div class="pwgate" id="pwGate" hidden>
       <form class="pwbox" id="pwForm" autocomplete="off">
         <h2 id="pwTitle">위탁 정산</h2>
@@ -76,14 +79,14 @@
   (function () {
     var exec = 'https:' + '//script.google.com/macros/s/AKfycby66qcbuyVKL0YjL21isQXYAe1yDkkSvnC5s59N7GGKDnTcVqIcs2xHwIenG7NlDbydPg/exec';
     var editor = 'editor.html';   // 빈티지톡 디자인 편집기(11/23 작업실 안으로 옮김 — 같은 폴더 editor.html)
-    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'], filter: ['tFilter', 'pFilter'], sale: ['tSale', 'pSale'], consign: ['tConsign', 'pConsign'], design: ['tDesign', 'pDesign'] };
-    var srcs = { auto: exec, pick: exec + '?page=pick&set=both', filter: exec + '?page=filter', sale: exec + '?page=sale', consign: exec + '?page=consign', design: 'editor.html' };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
+    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'], filter: ['tFilter', 'pFilter'], sale: ['tSale', 'pSale'], consign: ['tConsign', 'pConsign'], design: ['tDesign', 'pDesign'], settings: ['tSet', 'pSet'] };
+    var srcs = { auto: exec, pick: exec + '?page=pick&set=both', filter: exec + '?page=filter', sale: exec + '?page=sale', consign: exec + '?page=consign', design: 'editor.html', settings: exec + '?page=settings' };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
     var admin = document.getElementById('admin');
     admin.href = exec;   // 사장님 설정은 자동화 화면에 합쳐짐 — 바깥 창에서 열면 사장님 계정이 확실히 잡힘
     // 비밀번호 문(11/23 밤 사장님): 사진 밝기 조절 = 없음 · 쇼핑몰 자동화 · 배송관리 = 사장 또는 직원 · 나머지(필터 통계 · 세일 관리 · 위탁 정산 · 디자인 편집기) = 사장만.
     // 한 번 넣으면 이 창을 닫을 때까지 계속(sessionStorage + 50분마다 서버 입장표 늘리기). 확인은 웹앱 서버(doPost pw_login), 위탁 정산은 서버가 입장표를 다시 확인함.
-    var NEED = { auto: 'any', pick: 'any', filter: 'owner', sale: 'owner', consign: 'owner', design: 'owner' }, CUR = 'bright';
-    var TITLE = { auto: '쇼핑몰 자동화', pick: '배송관리', filter: '필터 통계', sale: '세일 관리', consign: '위탁 정산', design: '디자인 편집기' };
+    var NEED = { auto: 'any', pick: 'any', filter: 'owner', sale: 'owner', consign: 'owner', design: 'owner', settings: 'owner' }, CUR = 'bright';   // 11/24 설정(연결 · 로그인 · 알림 · 비밀번호) = 사장만
+    var TITLE = { auto: '쇼핑몰 자동화', pick: '배송관리', filter: '필터 통계', sale: '세일 관리', consign: '위탁 정산', design: '디자인 편집기', settings: '설정' };
     var gate = document.getElementById('pwGate'), pwIn = document.getElementById('pwIn'), pwMsg = document.getElementById('pwMsg'), pwOk = document.getElementById('pwOk');
     function sess() { try { var s = JSON.parse(sessionStorage.getItem('autoPw') || 'null'); return s && s.token ? s : null; } catch (e) { return null; } }
     function pass(need) { var s = sess(); if (!s) return null; if (need === 'owner' && s.role !== 'owner') return null; return s; }
@@ -127,8 +130,9 @@
       var fr = document.getElementById(tabs[name][1]);
       if (locked) { askPw(name); admin.hidden = true; }
       else {
-        if (srcs[name] && !fr.getAttribute('src')) fr.src = name === 'consign' ? srcs.consign + '&t=' + encodeURIComponent(pass('owner').token) : srcs[name];
-        admin.hidden = name !== 'auto' && name !== 'design'; admin.href = name === 'design' ? editor : exec;   // 디자인 편집기도 넓게 쓰고 싶으면 새 탭
+        var withTok = function (u) { return u + '&t=' + encodeURIComponent(pass('owner').token); };   // 사장 입장표를 서버가 다시 확인(위탁 정산 · 설정)
+        if (srcs[name] && !fr.getAttribute('src')) fr.src = name === 'consign' || name === 'settings' ? withTok(srcs[name]) : srcs[name];
+        admin.hidden = name !== 'auto' && name !== 'design' && name !== 'settings'; admin.href = name === 'design' ? editor : name === 'settings' ? withTok(srcs.settings) : exec;   // 넓게 쓰고 싶으면 새 탭
         try { fr.focus(); } catch (e) {}
       }
       var h = name === 'bright' ? '' : '#' + name;
@@ -141,6 +145,7 @@
     document.getElementById('tSale').onclick = function () { show('sale'); };
     document.getElementById('tConsign').onclick = function () { show('consign'); };
     document.getElementById('tDesign').onclick = function () { show('design'); };
+    document.getElementById('tSet').onclick = function () { show('settings'); };
     var start = location.hash.slice(1);
     show(tabs[start] ? start : 'bright');
   })();
