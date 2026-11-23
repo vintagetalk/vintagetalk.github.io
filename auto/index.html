@@ -27,6 +27,19 @@
   iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
   #pBright { background: #242424; }
   iframe[hidden] { display: none; }
+  /* 비밀번호 문(11/23) — 위탁 정산 = 사장, 디자인 편집기 = 사장 · 직원 */
+  .pwgate { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; padding: 20px; background: #242424; }
+  .pwgate[hidden] { display: none; }
+  .pwbox { width: 100%; max-width: 360px; background: #2c2c2c; border: 1px solid var(--line); border-radius: 16px; padding: 24px 24px 18px; color: var(--text); }
+  .pwbox h2 { margin: 0 0 4px; font-size: 20px; }
+  .pwbox p { margin: 0 0 14px; color: var(--sub); font-size: 14px; line-height: 1.5; }
+  .pwbox input { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 10px; border: 1px solid #555; background: #1f1f1f; color: var(--text); margin-bottom: 12px; }
+  .pwbox input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .pwbtns { display: flex; gap: 8px; justify-content: flex-end; }
+  .pwbtns button { font: inherit; font-size: 14px; border-radius: 9px; padding: 9px 16px; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--sub); }
+  .pwbtns button[type=submit] { background: var(--accent); border-color: var(--accent); color: var(--ink); font-weight: 700; }
+  .pwbtns button:disabled { opacity: .6; cursor: default; }
+  .pwmsg { margin: 10px 0 0 !important; min-height: 20px; color: #ff9b8a !important; }
 </style>
 </head>
 <body>
@@ -49,6 +62,15 @@
     <iframe id="pSale" role="tabpanel" aria-labelledby="tSale" title="세일 관리" hidden></iframe>
     <iframe id="pConsign" role="tabpanel" aria-labelledby="tConsign" title="위탁 정산" hidden allow="clipboard-write"></iframe>
     <iframe id="pDesign" role="tabpanel" aria-labelledby="tDesign" title="디자인 편집기" hidden allow="clipboard-read; clipboard-write"></iframe>
+    <div class="pwgate" id="pwGate" hidden>
+      <form class="pwbox" id="pwForm" autocomplete="off">
+        <h2 id="pwTitle">위탁 정산</h2>
+        <p id="pwSub">사장 비밀번호를 넣어 주세요.</p>
+        <input type="password" id="pwIn" autocomplete="current-password" aria-label="비밀번호" required>
+        <div class="pwbtns"><button type="button" id="pwCancel">다른 탭으로</button><button type="submit" id="pwOk">들어가기</button></div>
+        <p class="pwmsg" id="pwMsg" aria-live="polite"></p>
+      </form>
+    </div>
   </div>
   <script>
   (function () {
@@ -58,19 +80,52 @@
     var srcs = { auto: exec, pick: exec + '?page=pick&set=both', filter: exec + '?page=filter', sale: exec + '?page=sale', consign: exec + '?page=consign', design: 'editor.html' };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
     var admin = document.getElementById('admin');
     admin.href = exec;   // 사장님 설정은 자동화 화면에 합쳐짐 — 바깥 창에서 열면 사장님 계정이 확실히 잡힘
+    // 비밀번호 문(11/23 사장님): 위탁 정산 = 사장 비밀번호만, 디자인 편집기 = 사장 · 직원. 한 번 넣으면 이 창에서 6시간 안 물어봄.
+    // 비밀번호 확인은 웹앱 서버(doPost pw_login)가 하고, 위탁 정산은 서버가 입장표를 다시 확인함.
+    var NEED = { consign: 'owner', design: 'any' }, CUR = 'bright';
+    var gate = document.getElementById('pwGate'), pwIn = document.getElementById('pwIn'), pwMsg = document.getElementById('pwMsg'), pwOk = document.getElementById('pwOk');
+    function pass(need) {
+      try { var s = JSON.parse(sessionStorage.getItem('autoPw') || 'null'); if (!s || !s.token || s.exp < Date.now()) return null; if (need === 'owner' && s.role !== 'owner') return null; return s; } catch (e) { return null; }
+    }
+    function askPw(name) {
+      document.getElementById('pwTitle').textContent = name === 'consign' ? '위탁 정산' : '디자인 편집기';
+      document.getElementById('pwSub').textContent = name === 'consign' ? '사장 비밀번호를 넣어 주세요.' : '사장 또는 직원 비밀번호를 넣어 주세요.';
+      pwMsg.textContent = ''; pwIn.value = ''; gate.hidden = false;
+      setTimeout(function () { try { pwIn.focus(); } catch (e) {} }, 30);
+    }
+    document.getElementById('pwForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = CUR, need = NEED[name], pw = pwIn.value; if (!need || !pw) return;
+      pwOk.disabled = true; pwMsg.textContent = '확인 중…';
+      fetch(exec, { method: 'POST', body: JSON.stringify({ api: 'pw_login', pw: pw, need: need }) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          pwOk.disabled = false; pwIn.value = '';
+          if (!j || !j.ok || !j.r) { pwMsg.textContent = (j && j.msg) || '비밀번호가 맞지 않아요.'; pwIn.focus(); return; }
+          try { sessionStorage.setItem('autoPw', JSON.stringify({ token: j.r.token, role: j.r.role, exp: Date.now() + (j.r.hours || 6) * 3600000 - 300000 })); } catch (x) {}
+          gate.hidden = true; show(name);
+        })
+        .catch(function () { pwOk.disabled = false; pwMsg.textContent = '확인을 못 했어요. 인터넷을 확인하고 다시 눌러 주세요.'; });
+    });
+    document.getElementById('pwCancel').onclick = function () { gate.hidden = true; show('bright'); };
     function show(name) {
+      CUR = name;
+      var locked = NEED[name] && !pass(NEED[name]);
       Object.keys(tabs).forEach(function (k) {
         var on = k === name;
         document.getElementById(tabs[k][0]).setAttribute('aria-selected', on ? 'true' : 'false');
-        document.getElementById(tabs[k][1]).hidden = !on;
+        document.getElementById(tabs[k][1]).hidden = !on || locked;
       });
+      gate.hidden = true;
       var fr = document.getElementById(tabs[name][1]);
-      if (srcs[name] && !fr.getAttribute('src')) fr.src = srcs[name];
-      admin.hidden = name !== 'auto' && name !== 'design'; admin.href = name === 'design' ? editor : exec;   // 디자인 편집기도 넓게 쓰고 싶으면 새 탭
+      if (locked) { askPw(name); admin.hidden = true; }
+      else {
+        if (srcs[name] && !fr.getAttribute('src')) fr.src = name === 'consign' ? srcs.consign + '&t=' + encodeURIComponent(pass('owner').token) : srcs[name];
+        admin.hidden = name !== 'auto' && name !== 'design'; admin.href = name === 'design' ? editor : exec;   // 디자인 편집기도 넓게 쓰고 싶으면 새 탭
+        try { fr.focus(); } catch (e) {}
+      }
       var h = name === 'bright' ? '' : '#' + name;
       if (location.hash !== h) history.replaceState(null, '', location.pathname + location.search + h);
-      var f = document.getElementById(tabs[name][1]);
-      try { f.focus(); } catch (e) {}
     }
     document.getElementById('tBright').onclick = function () { show('bright'); };
     document.getElementById('tAuto').onclick = function () { show('auto'); };
