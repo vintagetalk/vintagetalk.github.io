@@ -1,0 +1,43 @@
+name: 일본 도매 가격 (평일 아침 환율)
+
+on:
+  schedule:
+    - cron: "40 0 * * 1-5"   # 평일 오전 9:40 (한국 시각)
+    - cron: "10 3 * * 1-5"   # 평일 낮 12:10 — 아침에 못 했을 때만 계산
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "오늘 이미 계산했어도 다시 계산"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: japan-prices
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 가격 계산
+        env:
+          JAPAN_COST: ${{ secrets.JAPAN_COST }}
+          FORCE: ${{ github.event.inputs.force }}
+        run: node .github/scripts/japan-prices.mjs
+
+      - name: 바뀌었으면 올리기
+        run: |
+          if git diff --quiet -- japan/prices.js; then echo "바뀐 것 없음"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add japan/prices.js
+          git commit -m "일본 도매 가격 $(grep -o 'basisDate: "[^"]*"' japan/prices.js | cut -d'"' -f2) 환율"
+          git push
+          curl -s -o /dev/null -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/pages/builds" || true
