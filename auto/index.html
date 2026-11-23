@@ -36,6 +36,7 @@
     <button role="tab" id="tPick" aria-controls="pPick" aria-selected="false">배송관리</button>
     <button role="tab" id="tFilter" aria-controls="pFilter" aria-selected="false">필터 통계</button>
     <button role="tab" id="tSale" aria-controls="pSale" aria-selected="false">세일 관리</button>
+    <button role="tab" id="tDesign" aria-controls="pDesign" aria-selected="false">디자인 편집기</button>
     <span class="sp"></span>
     <a id="admin" href="#" target="_blank" rel="noopener" hidden>새 탭에서 열기</a>
   </nav>
@@ -45,12 +46,14 @@
     <iframe id="pPick" role="tabpanel" aria-labelledby="tPick" title="배송관리" hidden></iframe>
     <iframe id="pFilter" role="tabpanel" aria-labelledby="tFilter" title="필터 통계" hidden></iframe>
     <iframe id="pSale" role="tabpanel" aria-labelledby="tSale" title="세일 관리" hidden></iframe>
+    <iframe id="pDesign" role="tabpanel" aria-labelledby="tDesign" title="디자인 편집기" hidden allow="clipboard-read; clipboard-write"></iframe>
   </div>
   <script>
   (function () {
     var exec = 'https:' + '//script.google.com/macros/s/AKfycby66qcbuyVKL0YjL21isQXYAe1yDkkSvnC5s59N7GGKDnTcVqIcs2xHwIenG7NlDbydPg/exec';
-    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'], filter: ['tFilter', 'pFilter'], sale: ['tSale', 'pSale'] };
-    var srcs = { auto: exec, pick: exec + '?page=pick&set=both', filter: exec + '?page=filter', sale: exec + '?page=sale' };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
+    var editor = 'https:' + '//script.google.com/macros/s/AKfycbzrI3sc050YoILeMSAch8It6sq6ZsWTcn8mcpKX7P7mdeYN4S1U8PZeRxq53Dux3xQvhw/exec';   // 빈티지톡 디자인 편집기 웹앱(11/23 이 탭으로 합침)
+    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'], filter: ['tFilter', 'pFilter'], sale: ['tSale', 'pSale'], design: ['tDesign', 'pDesign'] };
+    var srcs = { auto: exec, pick: exec + '?page=pick&set=both', filter: exec + '?page=filter', sale: exec + '?page=sale', design: editor };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
     var admin = document.getElementById('admin');
     admin.href = exec;   // 사장님 설정은 자동화 화면에 합쳐짐 — 바깥 창에서 열면 사장님 계정이 확실히 잡힘
     function show(name) {
@@ -61,7 +64,7 @@
       });
       var fr = document.getElementById(tabs[name][1]);
       if (srcs[name] && !fr.getAttribute('src')) fr.src = srcs[name];
-      admin.hidden = name !== 'auto';
+      admin.hidden = name !== 'auto' && name !== 'design'; admin.href = name === 'design' ? editor : exec;   // 디자인 편집기도 넓게 쓰고 싶으면 새 탭
       var h = name === 'bright' ? '' : '#' + name;
       if (location.hash !== h) history.replaceState(null, '', location.pathname + location.search + h);
       var f = document.getElementById(tabs[name][1]);
@@ -72,6 +75,7 @@
     document.getElementById('tPick').onclick = function () { show('pick'); };
     document.getElementById('tFilter').onclick = function () { show('filter'); };
     document.getElementById('tSale').onclick = function () { show('sale'); };
+    document.getElementById('tDesign').onclick = function () { show('design'); };
     var start = location.hash.slice(1);
     show(tabs[start] ? start : 'bright');
   })();
