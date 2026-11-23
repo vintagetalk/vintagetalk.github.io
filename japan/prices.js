@@ -1,13 +1,13 @@
-// 매일 아침 자동 계산이 이 파일을 새로 씁니다. 원가는 넣지 않습니다(결과 가격만).
+// 평일 아침 자동 계산(GitHub Actions)이 이 파일을 새로 씁니다. 원가는 넣지 않습니다(결과 가격만).
 // 컨테이너는 1만 원, 베일은 1천 원 단위로 올림. 모두 부가세 포함.
 window.VT_PRICES = {
   basisDate: "2026-11-23",
-  rate: { jpy100: 845.65, source: "하나은행 매매기준율" },
+  rate: { jpy100: 844.44, source: "하나은행 매매기준율" },
   items: {
-    "hokkaido": { container: 17620000, bale: 267000 },
-    "hardoff-hokkaido": { container: 18380000, bale: 289000 },
-    "bookoff-hokkaido": { container: 23530000, bale: 362000 },
-    "2nd-kanto": { container: 23530000, bale: 362000 },
-    "shikoku": { container: 18460000, bale: 157000 }
+    "hokkaido": { container: 17600000, bale: 267000 },
+    "hardoff-hokkaido": { container: 18360000, bale: 289000 },
+    "bookoff-hokkaido": { container: 23500000, bale: 362000 },
+    "2nd-kanto": { container: 23500000, bale: 362000 },
+    "shikoku": { container: 18440000, bale: 156000 }
   }
 };
