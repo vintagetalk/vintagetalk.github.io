@@ -368,7 +368,7 @@ footer p{margin:0 0 6px}
   <section class="hero" aria-labelledby="hero-title">
     <div>
       <h1 id="hero-title">Japanese used clothing,<br>from a full container to a single bale</h1>
-      <p class="lead">Shop-return stock from 2nd STREET, HARD OFF and BOOKOFF, plus general used clothing from Hokkaido and Shikoku. Buy a whole container, single bales, or pick what you need from an opened bale.</p>
+      <p class="lead">Shop-return stock from 2nd STREET, HARD OFF and BOOKOFF, plus general used clothing from Hokkaido and Shikoku. Buy a 40ft container, single bales, or pick from an opened bale.</p>
       <div class="actions">
         <a class="btn btn-solid" href="#items">See today's prices</a>
         <a class="btn btn-line js-kakao" href="#contact">Ask on KakaoTalk</a>
@@ -376,8 +376,8 @@ footer p{margin:0 0 6px}
       <p class="own">Our own vintage online shop <a class="js-shop js-shop-text" target="_blank" rel="noopener"></a> · Instagram <a class="js-insta js-insta-at" target="_blank" rel="noopener"></a></p>
       <div class="plate">
         <dl>
-          <dt>Unit</dt><dd>One 40ft container, bales, or bale picking</dd>
-          <dt>Weight</dt><dd class="num">About 23–26 tonnes per container</dd>
+          <dt>Unit</dt><dd>40ft container, bales, or bale picking</dd>
+          <dt>Weight</dt><dd class="num">About 23–26 tonnes per 40ft container</dd>
           <dt>Price</dt><dd>Incl. VAT, recalculated daily at the KEB Hana Bank rate<span class="js-rate-hero"></span></dd>
           <dt>Arrival</dt><dd>About 2 weeks after shipping from Japan, Incheon port</dd>
         </dl>
@@ -413,25 +413,25 @@ footer p{margin:0 0 6px}
 <section class="block" id="how" aria-labelledby="how-title">
   <div class="wrap">
     <h2 id="how-title">How to buy</h2>
-    <p class="sub">You can buy a whole 40ft container, buy as many bales as you need from our warehouse, or pick out just the clothes you want with bale picking.</p>
+    <p class="sub">Buy in one of three ways: a 40ft container, bales, or bale picking.</p>
     <div class="how">
       <div>
         <h3>Buy a container</h3>
-        <p class="hsub">We import a whole container from Japan and deliver it to your warehouse. The "One container" price in the list is for delivery to our warehouse in Yangju, Gyeonggi-do; for other destinations only the trucking is added.</p>
+        <p class="hsub">We import a 40ft container from Japan and deliver it to your warehouse. The list price includes delivery to your warehouse.</p>
         <ol>
           <li><b>Choose and ask</b><span>Tell us the type you want and where to deliver.</span></li>
           <li><b>Set the shipping date</b><span>Each type has fixed shipping dates every month.</span></li>
-          <li><b>Contract and payment</b><span>The amount is set at that day's exchange rate, and we issue a tax invoice.</span></li>
+          <li><b>Contract and payment</b><span>The amount is set at the exchange rate on the day you pay, and we issue a tax invoice.</span></li>
           <li><b>About 2 weeks after shipping</b><span>We clear customs when it arrives at Incheon.</span></li>
-          <li><b>Delivery</b><span>Prices include delivery to our warehouse in Yangju, Gyeonggi-do. For other destinations we quote the trucking separately.</span></li>
+          <li><b>Delivered to your warehouse</b><span>Delivery is included in the list price.</span></li>
         </ol>
       </div>
       <div>
         <h3>Buy bales</h3>
-        <p class="hsub">You buy as many bales as you need from stock at our warehouse in Yangju, Gyeonggi-do. A small warehouse storage charge is added compared with buying a whole container.</p>
+        <p class="hsub">You buy as many bales as you need from our warehouse in Yangju, Gyeonggi-do. A small storage charge is added compared with a 40ft container.</p>
         <ol>
           <li><b>Check warehouse stock</b><span>We will tell you the types and quantities in stock by KakaoTalk or phone.</span></li>
-          <li><b>Choose quantity, get a quote</b><span>Tell us the type and how many bales, and we will quote the per-bale price in the list plus a small storage charge.</span></li>
+          <li><b>Choose quantity, get a quote</b><span>Tell us the type and quantity, and we will quote the per-bale price plus storage.</span></li>
           <li><b>Loading at the warehouse</b><span>We load your truck with a forklift. A bale weighs about 370 kg, so please come with a truck.</span></li>
         </ol>
       </div>
@@ -439,7 +439,7 @@ footer p{margin:0 0 6px}
     <div class="pick">
       <div class="pick-head">
         <h3>Bale picking <span>Open a bale and take only what you want</span></h3>
-        <p class="hsub">No need to buy a whole bale. We open a bale at the warehouse and you pick only what suits your store, so a picking fee is charged separately from container and bale prices.</p>
+        <p class="hsub">No need to buy a whole bale. We open a bale at the warehouse, you pick only what you need, and a picking fee is charged separately.</p>
       </div>
       <ol>
         <li><b>Book</b><span>Book a day by KakaoTalk or phone, and we will tell you which bales are in and what the bale picking costs.</span></li>
@@ -716,7 +716,7 @@ function areaSvg(on) {
 function itemHtml(i) {
   const p = P[i.id];
   const price = p
-    ? `<span class="pr num"><small class="lbl">One container</small>${man(p.container)}<small class="vat">${(bk => T(`Per bale${bk ? `(${bk})` : ""} ${won(p.bale)}`, `per bale${bk ? ` (${bk})` : ""} ${won(p.bale)}`))((i.bkg || "").replace(/^(약|approx\.|約|约) ?/, ""))}</small><small class="vat-tag">${T("incl. VAT", "incl. VAT")}</small></span>`
+    ? `<span class="pr num"><small class="lbl">40ft container</small>${man(p.container)}<small class="vat">${(bk => T(`Per bale${bk ? `(${bk})` : ""} ${won(p.bale)}`, `per bale${bk ? ` (${bk})` : ""} ${won(p.bale)}`))((i.bkg || "").replace(/^(약|approx\.|約|约) ?/, ""))}</small><small class="vat-tag">${T("incl. VAT", "incl. VAT")}</small></span>`
     : `<span class="pr none">Ask for a quote</span>`;
   const bw = i.bkg ? (i.count ? T("1개 " + i.bkg, i.bkg + " each") : T("Per bale " + i.bkg, i.bkg + " per bale")) : "";
   const meta = [i.wt || i.weight, i.count ? "" + i.count : "", bw].filter(x => x && x !== "Confirmed at shipping").join("  ·  ");
