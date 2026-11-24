@@ -145,7 +145,11 @@
     document.getElementById('tAuto').onclick = function () { show('auto'); };
     // 11/24: 쇼핑몰 자동화 화면의 [찾는 목록] 단추가 보내는 신호 → 이 창 안에서 찾는 목록 화면으로 바꿈(매번 새로 읽음)
     window.addEventListener('message', function (e) {
-      var d = e.data || {}; if (d.vt !== 'showPick' || !/\.googleusercontent\.com$|^https:\/\/script\.google\.com$/.test(e.origin)) return;
+      var d = e.data || {}; if (!/\.googleusercontent\.com$|^https:\/\/script\.google\.com$/.test(e.origin)) return;
+      if (d.vt === 'saleMall' && /^(oldmarket|k2sun2000|korshin7)$/.test(d.mall)) {   // 11/25: 세일 관리에서 가게를 고르면 그 가게 화면으로
+        var so = pass('owner'); if (!so) return; document.getElementById('pSale').src = exec + '?page=sale&mall=' + d.mall + '&t=' + encodeURIComponent(so.token) + '&v=' + Date.now(); return;
+      }
+      if (d.vt !== 'showPick') return;
       var set = /^(both|talk|plusok)$/.test(d.set) ? d.set : 'both', fr = document.getElementById('pPick');
       var ps = pass('any');   // 11/24: 배송준비중으로 옮기려면 서버가 입장표(사장 또는 직원)를 확인함
       fr.src = exec + '?page=pick&set=' + set + (ps ? '&t=' + encodeURIComponent(ps.token) : '') + (d.move ? '&move=1' : '') + '&v=' + Date.now(); show('pick');
