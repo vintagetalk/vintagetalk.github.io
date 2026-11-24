@@ -47,7 +47,6 @@
   <nav role="tablist" aria-label="작업 고르기">
     <button role="tab" id="tBright" aria-controls="pBright" aria-selected="true">사진 밝기 조절</button>
     <button role="tab" id="tAuto" aria-controls="pAuto" aria-selected="false">쇼핑몰 자동화</button>
-    <button role="tab" id="tPick" aria-controls="pPick" aria-selected="false">배송관리</button>
     <button role="tab" id="tFilter" aria-controls="pFilter" aria-selected="false">필터 통계</button>
     <button role="tab" id="tSale" aria-controls="pSale" aria-selected="false">세일 관리</button>
     <button role="tab" id="tConsign" aria-controls="pConsign" aria-selected="false">위탁 정산</button>
@@ -59,7 +58,7 @@
   <div class="panes">
     <iframe id="pBright" role="tabpanel" aria-labelledby="tBright" title="사진 밝기 조절" src="brightness.html" allow="clipboard-read; clipboard-write"></iframe>
     <iframe id="pAuto" role="tabpanel" aria-labelledby="tAuto" title="쇼핑몰 자동화" hidden allow="clipboard-write"></iframe>
-    <iframe id="pPick" role="tabpanel" aria-labelledby="tPick" title="배송관리" hidden></iframe>
+    <iframe id="pPick" role="tabpanel" aria-labelledby="tAuto" title="찾는 목록" hidden></iframe><!-- 11/24 사장님: 위 '배송관리' 탭은 뺌, 쇼핑몰 자동화의 [찾는 목록] 단추로만 이 화면으로 바뀜 -->
     <iframe id="pFilter" role="tabpanel" aria-labelledby="tFilter" title="필터 통계" hidden></iframe>
     <iframe id="pSale" role="tabpanel" aria-labelledby="tSale" title="세일 관리" hidden></iframe>
     <iframe id="pConsign" role="tabpanel" aria-labelledby="tConsign" title="위탁 정산" hidden allow="clipboard-write"></iframe>
@@ -122,8 +121,8 @@
       CUR = name;
       var locked = NEED[name] && !pass(NEED[name]);
       Object.keys(tabs).forEach(function (k) {
-        var on = k === name;
-        document.getElementById(tabs[k][0]).setAttribute('aria-selected', on ? 'true' : 'false');
+        var on = k === name, tb = document.getElementById(tabs[k][0]);
+        if (tb) tb.setAttribute('aria-selected', (on || (name === 'pick' && k === 'auto')) ? 'true' : 'false');   // 찾는 목록은 탭이 없어서 '쇼핑몰 자동화'에 불 켬
         document.getElementById(tabs[k][1]).hidden = !on || locked;
       });
       gate.hidden = true;
@@ -140,7 +139,12 @@
     }
     document.getElementById('tBright').onclick = function () { show('bright'); };
     document.getElementById('tAuto').onclick = function () { show('auto'); };
-    document.getElementById('tPick').onclick = function () { show('pick'); };
+    // 11/24: 쇼핑몰 자동화 화면의 [찾는 목록] 단추가 보내는 신호 → 이 창 안에서 찾는 목록 화면으로 바꿈(매번 새로 읽음)
+    window.addEventListener('message', function (e) {
+      var d = e.data || {}; if (d.vt !== 'showPick' || !/\.googleusercontent\.com$|^https:\/\/script\.google\.com$/.test(e.origin)) return;
+      var set = /^(both|talk|plusok)$/.test(d.set) ? d.set : 'both', fr = document.getElementById('pPick');
+      fr.src = exec + '?page=pick&set=' + set + '&v=' + Date.now(); show('pick');
+    });
     document.getElementById('tFilter').onclick = function () { show('filter'); };
     document.getElementById('tSale').onclick = function () { show('sale'); };
     document.getElementById('tConsign').onclick = function () { show('consign'); };
