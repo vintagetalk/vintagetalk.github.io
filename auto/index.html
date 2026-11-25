@@ -23,6 +23,7 @@
   nav a { color: var(--sub); font-size: 13px; text-decoration: none; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; white-space: nowrap; }
   nav a:hover { color: var(--text); border-color: #5a5a5a; }
   nav a[hidden] { display: none; }
+  nav a.need { color: var(--ink); background: var(--accent); border-color: var(--accent); font-weight: 700; }
   nav button.setbtn { border-color: var(--line); font-size: 13px; padding: 6px 12px; }
   .panes { position: relative; min-height: 0; }
   iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
@@ -55,6 +56,7 @@
     <button role="tab" id="tTax" aria-controls="pTax" aria-selected="false">세금계산서</button>
     <button role="tab" id="tDesign" aria-controls="pDesign" aria-selected="false">디자인 편집기</button>
     <span class="sp"></span>
+    <a id="helperGet" class="need" href="vt-helper-install.cmd" download="작업실_도우미_설치.cmd" hidden title="위드유 엑셀을 이 PC 바탕화면에 바로 저장하려면 도우미가 있어야 해요. 받은 파일을 한 번 실행하면 끝나요(PC마다 한 번). 설치했는데도 이 단추가 보이면 주소창 왼쪽 자물쇠에서 「로컬 네트워크 액세스」를 허용으로 바꿔 주세요.">PC 도우미 설치</a>
     <a id="admin" href="#" target="_blank" rel="noopener" hidden>새 탭에서 열기</a>
     <button role="tab" id="tSet" aria-controls="pSet" aria-selected="false" class="setbtn" title="연결 · 로그인 · 알림 · 비밀번호(사장님만)">⚙ 설정</button>
   </nav>
@@ -123,6 +125,17 @@
         .catch(function () { pwOk.disabled = false; pwMsg.textContent = '확인을 못 했어요. 인터넷을 확인하고 다시 눌러 주세요.'; });
     });
     document.getElementById('pwCancel').onclick = function () { gate.hidden = true; show('bright'); };
+    // 11/25: 이 PC에 도우미(위드유 엑셀을 바탕화면에 저장 · 127.0.0.1:47815)가 있는지 — 윈도우 PC에서 비밀번호로 들어와 쇼핑몰 자동화를 열 때 확인. 없거나 옛 판이면 [PC 도우미 설치]가 보임
+    var helperGet = document.getElementById('helperGet'), helperT = null, helperSeen = false;
+    function helperCheck(left) {
+      if (!/Windows/i.test(navigator.userAgent) || !pass('any')) return;
+      var ctl = ('AbortController' in window) ? new AbortController() : null, tm = setTimeout(function () { if (ctl) ctl.abort(); }, 4000);
+      var again = function () { if (left > 0) helperT = setTimeout(function () { helperCheck(left - 1); }, 10000); };
+      fetch('http://127.0.0.1:47815/ping', ctl ? { signal: ctl.signal } : {}).then(function (r) { return r.json(); })
+        .then(function (j) { clearTimeout(tm); var ok = !!(j && j.ok && parseFloat(j.ver) >= 1.1); helperGet.hidden = ok; helperGet.textContent = j && j.ok && !ok ? 'PC 도우미 새 판 설치' : 'PC 도우미 설치'; if (!ok) again(); })
+        .catch(function () { clearTimeout(tm); helperGet.hidden = false; again(); });
+    }
+    helperGet.addEventListener('click', function () { clearTimeout(helperT); helperT = setTimeout(function () { helperCheck(24); }, 8000); });   // 받은 파일을 실행하면 4분 안에 단추가 저절로 사라짐
     function show(name) {
       CUR = name;
       var locked = NEED[name] && !pass(NEED[name]);
@@ -139,6 +152,7 @@
         // 11/24 밤: 웹앱 화면은 모두 입장표를 같이 줌(위탁 정산 · 설정 · 매출 통계는 서버가 사장인지 다시 확인, 나머지는 [텔레그램으로 보내기] 저장 때 확인)
         var ps0 = pass('any'), tokUrl = function (u) { return ps0 && u.indexOf(exec) === 0 ? u + (u.indexOf('?') < 0 ? '?' : '&') + 't=' + encodeURIComponent(ps0.token) : u; };
         if (srcs[name] && !fr.getAttribute('src')) fr.src = tokUrl(srcs[name]);
+        if (name === 'auto' && !helperSeen) { helperSeen = true; helperCheck(0); }
         admin.hidden = name !== 'auto' && name !== 'design' && name !== 'settings'; admin.href = name === 'design' ? editor : name === 'settings' ? withTok(srcs.settings) : exec;   // 넓게 쓰고 싶으면 새 탭
         try { fr.focus(); } catch (e) {}
       }
