@@ -136,6 +136,21 @@
         .catch(function () { clearTimeout(tm); helperGet.hidden = false; again(); });
     }
     helperGet.addEventListener('click', function () { clearTimeout(helperT); helperT = setTimeout(function () { helperCheck(24); }, 8000); });   // 받은 파일을 실행하면 4분 안에 단추가 저절로 사라짐
+    // 11/25: 그 PC 크롬의 구글 로그인 정보 때문에 웹앱 화면이 「현재 파일을 열 수 없습니다」로 뜨는 경우 — 화면이 15초 안에 '열렸다' 신호(vtReady)를 안 보내면 구글 계정 없이(credentialless) 다시 엶. 7일 기억
+    var CRED = false, credOk = false, credT = null, CRED_CAN = 'credentialless' in HTMLIFrameElement.prototype;
+    try { var cs0 = JSON.parse(localStorage.getItem('vtCredless') || 'null'); CRED = CRED_CAN && !!(cs0 && cs0.until > Date.now()); } catch (e) {}
+    function credFrames() { return Object.keys(tabs).filter(function (k) { return srcs[k] && srcs[k].indexOf(exec) === 0; }).map(function (k) { return document.getElementById(tabs[k][1]); }).filter(function (f) { return f; }); }
+    function credApply() { if (CRED) credFrames().forEach(function (f) { f.setAttribute('credentialless', ''); }); }
+    credApply();
+    function credWatch() {
+      if (CRED || credOk || !CRED_CAN) return;
+      clearTimeout(credT); credT = setTimeout(function () {
+        if (credOk || CRED) return;
+        CRED = true; try { localStorage.setItem('vtCredless', JSON.stringify({ until: Date.now() + 7 * 86400000 })); } catch (e) {}
+        credFrames().forEach(function (f) { var u = f.getAttribute('src'); f.setAttribute('credentialless', ''); if (u) { f.removeAttribute('src'); f.src = u; } });   // 속성을 먼저 붙이고 다시 엶
+      }, 15000);
+    }
+    window.addEventListener('message', function (e) { if ((e.data || {}).vt === 'vtReady' && /\.googleusercontent\.com$/.test(e.origin)) { credOk = true; clearTimeout(credT); } });
     function show(name) {
       CUR = name;
       var locked = NEED[name] && !pass(NEED[name]);
@@ -151,7 +166,7 @@
         var withTok = function (u) { return u + '&t=' + encodeURIComponent(pass('owner').token); };   // 사장 입장표를 서버가 다시 확인(위탁 정산 · 설정)
         // 11/24 밤: 웹앱 화면은 모두 입장표를 같이 줌(위탁 정산 · 설정 · 매출 통계는 서버가 사장인지 다시 확인, 나머지는 [텔레그램으로 보내기] 저장 때 확인)
         var ps0 = pass('any'), tokUrl = function (u) { return ps0 && u.indexOf(exec) === 0 ? u + (u.indexOf('?') < 0 ? '?' : '&') + 't=' + encodeURIComponent(ps0.token) : u; };
-        if (srcs[name] && !fr.getAttribute('src')) fr.src = tokUrl(srcs[name]);
+        if (srcs[name] && !fr.getAttribute('src')) { fr.src = tokUrl(srcs[name]); if (srcs[name].indexOf(exec) === 0) credWatch(); }
         if (name === 'auto' && !helperSeen) { helperSeen = true; helperCheck(0); }
         admin.hidden = name !== 'auto' && name !== 'design' && name !== 'settings'; admin.href = name === 'design' ? editor : name === 'settings' ? withTok(srcs.settings) : exec;   // 넓게 쓰고 싶으면 새 탭
         try { fr.focus(); } catch (e) {}
