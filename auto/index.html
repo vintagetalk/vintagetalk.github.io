@@ -58,13 +58,14 @@
     <button role="tab" id="tSales" aria-controls="pSales" aria-selected="false">매출 통계</button>
     <button role="tab" id="tConsign" aria-controls="pConsign" aria-selected="false">위탁 정산</button><!-- 11/25 사장님: 매출 통계와 자리 바꿈(매출 통계 → 위탁 정산 → 세금계산서) -->
     <button role="tab" id="tTax" aria-controls="pTax" aria-selected="false">세금계산서</button>
+    <button role="tab" id="tSms" aria-controls="pSms" aria-selected="false">문자보내기</button><!-- 11/25 사장님: 세금계산서 오른쪽 · 사장 비밀번호로만 -->
     <button role="tab" id="tDesign" aria-controls="pDesign" aria-selected="false">디자인 편집기</button>
     <span class="sp"></span>
     <span id="credNote" role="status" hidden></span>
     <a id="helperGet" class="need" href="vt-helper-install.cmd" download="작업실_도우미_설치.cmd" hidden title="위드유 엑셀을 이 PC 바탕화면에 바로 저장하려면 도우미가 있어야 해요. 받은 파일을 한 번 실행하면 끝나요(PC마다 한 번). 설치했는데도 이 단추가 보이면 주소창 왼쪽 자물쇠에서 「로컬 네트워크 액세스」를 허용으로 바꿔 주세요.">PC 도우미 설치</a>
     <a id="admin" href="#" target="_blank" rel="noopener" hidden>새 탭에서 열기</a>
     <button role="tab" id="tSet" aria-controls="pSet" aria-selected="false" class="setbtn" title="연결 · 로그인 · 알림 · 비밀번호(사장님만)">⚙ 설정</button>
-    <span id="shellVer" title="작업실 껍데기 화면의 판 번호">판 140</span>
+    <span id="shellVer" title="작업실 껍데기 화면의 판 번호">판 141</span>
   </nav>
   <div class="panes">
     <iframe id="pBright" role="tabpanel" aria-labelledby="tBright" title="사진 밝기 조절" src="brightness.html" allow="clipboard-read; clipboard-write"></iframe>
@@ -76,6 +77,7 @@
     <iframe id="pConsign" role="tabpanel" aria-labelledby="tConsign" title="위탁 정산" hidden allow="clipboard-write"></iframe>
     <iframe id="pSales" role="tabpanel" aria-labelledby="tSales" title="매출 통계" hidden allow="clipboard-write"></iframe><!-- 11/24 사장님: 매출 통계는 사장 비밀번호로만(직원은 못 들어감) -->
     <iframe id="pTax" role="tabpanel" aria-labelledby="tTax" title="세금계산서" hidden allow="clipboard-read; clipboard-write"></iframe><!-- 11/25 사장님: 매출 통계 오른쪽 · 사장 비밀번호로만 -->
+    <iframe id="pSms" role="tabpanel" aria-labelledby="tSms" title="문자보내기" hidden allow="clipboard-read; clipboard-write"></iframe>
     <iframe id="pDesign" role="tabpanel" aria-labelledby="tDesign" title="디자인 편집기" hidden allow="clipboard-read; clipboard-write"></iframe>
     <iframe id="pSet" role="tabpanel" aria-labelledby="tSet" title="설정" hidden allow="clipboard-write"></iframe>
     <div class="pwgate" id="pwGate" hidden>
@@ -92,14 +94,14 @@
   (function () {
     var exec = 'https:' + '//script.google.com/macros/s/AKfycby66qcbuyVKL0YjL21isQXYAe1yDkkSvnC5s59N7GGKDnTcVqIcs2xHwIenG7NlDbydPg/exec';
     var editor = 'editor.html';   // 빈티지톡 디자인 편집기(11/23 작업실 안으로 옮김 — 같은 폴더 editor.html)
-    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'], leave: ['tLeave', 'pLeave'], filter: ['tFilter', 'pFilter'], sale: ['tSale', 'pSale'], consign: ['tConsign', 'pConsign'], sales: ['tSales', 'pSales'], tax: ['tTax', 'pTax'], design: ['tDesign', 'pDesign'], settings: ['tSet', 'pSet'] };
-    var srcs = { auto: exec, pick: exec + '?page=pick&set=both', leave: exec + '?page=leave', filter: exec + '?page=filter', sale: exec + '?page=sale', consign: exec + '?page=consign', sales: exec + '?page=sales', tax: exec + '?page=tax', design: 'editor.html', settings: exec + '?page=settings' };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
+    var tabs = { bright: ['tBright', 'pBright'], auto: ['tAuto', 'pAuto'], pick: ['tPick', 'pPick'], leave: ['tLeave', 'pLeave'], filter: ['tFilter', 'pFilter'], sale: ['tSale', 'pSale'], consign: ['tConsign', 'pConsign'], sales: ['tSales', 'pSales'], tax: ['tTax', 'pTax'], sms: ['tSms', 'pSms'], design: ['tDesign', 'pDesign'], settings: ['tSet', 'pSet'] };
+    var srcs = { auto: exec, pick: exec + '?page=pick&set=both', leave: exec + '?page=leave', filter: exec + '?page=filter', sale: exec + '?page=sale', consign: exec + '?page=consign', sales: exec + '?page=sales', tax: exec + '?page=tax', sms: exec + '?page=sms', design: 'editor.html', settings: exec + '?page=settings' };   // 배송관리 탭은 '톡·플오 이어서'로 시작, 필터 통계·세일 관리는 큰 화면
     var admin = document.getElementById('admin');
     admin.href = exec;   // 사장님 설정은 자동화 화면에 합쳐짐 — 바깥 창에서 열면 사장님 계정이 확실히 잡힘
     // 비밀번호 문(11/23 밤 사장님): 사진 밝기 조절 = 없음 · 쇼핑몰 자동화 · 배송관리 = 사장 또는 직원 · 나머지(필터 통계 · 세일 관리 · 위탁 정산 · 디자인 편집기) = 사장만.
     // 한 번 넣으면 이 창을 닫을 때까지 계속(sessionStorage + 50분마다 서버 입장표 늘리기). 확인은 웹앱 서버(doPost pw_login), 위탁 정산은 서버가 입장표를 다시 확인함.
-    var NEED = { auto: 'any', pick: 'any', leave: 'any', filter: 'owner', sale: 'owner', consign: 'owner', sales: 'owner', tax: 'owner', design: 'owner', settings: 'owner' }, CUR = 'bright';   // 11/24 설정(연결 · 로그인 · 알림 · 비밀번호) = 사장만
-    var TITLE = { auto: '쇼핑몰 자동화', pick: '배송관리', leave: '연차 관리', filter: '필터 통계', sale: '세일 관리', consign: '위탁 정산', sales: '매출 통계', tax: '세금계산서', design: '디자인 편집기', settings: '설정' };
+    var NEED = { auto: 'any', pick: 'any', leave: 'any', filter: 'owner', sale: 'owner', consign: 'owner', sales: 'owner', tax: 'owner', sms: 'owner', design: 'owner', settings: 'owner' }, CUR = 'bright';   // 11/24 설정(연결 · 로그인 · 알림 · 비밀번호) = 사장만
+    var TITLE = { auto: '쇼핑몰 자동화', pick: '배송관리', leave: '연차 관리', filter: '필터 통계', sale: '세일 관리', consign: '위탁 정산', sales: '매출 통계', tax: '세금계산서', sms: '문자보내기', design: '디자인 편집기', settings: '설정' };
     var gate = document.getElementById('pwGate'), pwIn = document.getElementById('pwIn'), pwMsg = document.getElementById('pwMsg'), pwOk = document.getElementById('pwOk');
     function sess() { try { var s = JSON.parse(sessionStorage.getItem('autoPw') || 'null'); return s && s.token ? s : null; } catch (e) { return null; } }
     function pass(need) { var s = sess(); if (!s) return null; if (need === 'owner' && s.role !== 'owner') return null; return s; }
@@ -236,6 +238,7 @@
     document.getElementById('tConsign').onclick = function () { show('consign'); };
     document.getElementById('tSales').onclick = function () { show('sales'); };
     document.getElementById('tTax').onclick = function () { show('tax'); };
+    document.getElementById('tSms').onclick = function () { show('sms'); };   // 11/26 문자보내기
     document.getElementById('tDesign').onclick = function () { show('design'); };
     document.getElementById('tSet').onclick = function () { show('settings'); };
     var start = location.hash.slice(1);
