@@ -167,7 +167,7 @@
       if (d.vt === 'saleMall' && /^(oldmarket|k2sun2000|korshin7)$/.test(d.mall)) {   // 11/25: 세일 관리에서 가게를 고르면 그 가게 화면으로
         var so = pass('owner'); if (!so) return; document.getElementById('pSale').src = exec + '?page=sale&mall=' + d.mall + '&t=' + encodeURIComponent(so.token) + '&v=' + Date.now(); return;
       }
-      if (d.vt === 'goTab' && /^(consign|tax|sales)$/.test(d.tab)) { show(d.tab); return; }   // 11/25: 세금계산서 화면의 [위탁 정산 열기]
+      if (d.vt === 'goTab' && /^(consign|tax|sales|auto)$/.test(d.tab)) { show(d.tab); return; }   // auto = 찾는 목록의 [닫기]   // 11/25: 세금계산서 화면의 [위탁 정산 열기]
       if (d.vt === 'saveDesk' && typeof d.name === 'string' && typeof d.b64 === 'string') {   // 11/25: 위드유 엑셀을 이 PC 바탕화면에(PC 도우미 127.0.0.1:47815 가 저장) — 입장표가 있을 때만
         var back = function (o) { o.vt = 'saveDeskDone'; o.id = d.id; try { e.source.postMessage(o, e.origin); } catch (x2) {} };
         if (!pass('any')) { back({ ok: false, msg: '비밀번호로 들어온 뒤에 쓸 수 있어요.' }); return; }
