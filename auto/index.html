@@ -154,6 +154,14 @@
         var so = pass('owner'); if (!so) return; document.getElementById('pSale').src = exec + '?page=sale&mall=' + d.mall + '&t=' + encodeURIComponent(so.token) + '&v=' + Date.now(); return;
       }
       if (d.vt === 'goTab' && /^(consign|tax|sales)$/.test(d.tab)) { show(d.tab); return; }   // 11/25: 세금계산서 화면의 [위탁 정산 열기]
+      if (d.vt === 'saveDesk' && typeof d.name === 'string' && typeof d.b64 === 'string') {   // 11/25: 위드유 엑셀을 이 PC 바탕화면에(PC 도우미 127.0.0.1:47815 가 저장) — 입장표가 있을 때만
+        var back = function (o) { o.vt = 'saveDeskDone'; o.id = d.id; try { e.source.postMessage(o, e.origin); } catch (x2) {} };
+        if (!pass('any')) { back({ ok: false, msg: '비밀번호로 들어온 뒤에 쓸 수 있어요.' }); return; }
+        fetch('http://127.0.0.1:47815/save', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ name: d.name, b64: d.b64 }) })
+          .then(function (r) { return r.json(); }).then(function (j) { back({ ok: !!j.ok, path: j.path || '', msg: j.msg || '' }); })
+          .catch(function () { back({ ok: false, msg: 'PC 도우미가 꺼져 있어요.' }); });
+        return;
+      }
       if (d.vt !== 'showPick') return;
       var set = /^(both|talk|plusok)$/.test(d.set) ? d.set : 'both', fr = document.getElementById('pPick');
       var ps = pass('any');   // 11/24: 배송준비중으로 옮기려면 서버가 입장표(사장 또는 직원)를 확인함
