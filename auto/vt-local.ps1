@@ -1,4 +1,4 @@
-﻿# 작업실 PC 도우미 1.2 (11/25 밤) — 작업실(/auto) 화면이 시키는 일을 이 PC에서 대신 함
+﻿# 작업실 PC 도우미 1.3 (11/26) — 작업실(/auto) 화면이 시키는 일을 이 PC에서 대신 함(④ 알리고 문자 중계 추가)
 #   ① 위드유 엑셀 · 세 칸 파일을 저장 폴더에 저장(/save) — 저장 폴더는 이 PC에서 고름(/cfg/pick 이 폴더 고르는 창을 띄움 · 처음에는 바탕화면). 엑셀 받기용(get) · 위드유 출력용(auto) 따로
 #   ② 위드유 출력(/withu/…): 엑셀을 위드유 출력 폴더에 두고 → 위드유 조작 도우미(관리자 권한 예약 작업 WithuHelper)에게 불러오기 · 택배정보생성 · 전체선택 · 바로 인쇄를 시킴 → 위드유가 만든 결과 엑셀을 작업실 화면에 돌려줌
 #   ③ 다 끝난 엑셀 지우기(/del): 위드유 출력 폴더 안의 「위드유_….xls」만
@@ -7,7 +7,7 @@
 # 주의: 파워셸은 변수 이름의 대소문자를 안 가림 — $origin 과 $ORIGIN 은 같은 변수(1.0 의 버그). 허용 출처는 $ALLOW.
 param([int]$Port = 47815)   # 시험할 때만 다른 번호로 켬
 $ErrorActionPreference = 'Stop'
-$ALLOW = 'https://vintagetalk.github.io'; $VER = '1.2'
+$ALLOW = 'https://vintagetalk.github.io'; $VER = '1.3'   # 1.3(11/26): ④ 문자보내기 알리고 중계(/aligo)
 $LOG = Join-Path $PSScriptRoot 'vt-local.log'
 $CFG = Join-Path $env:LOCALAPPDATA 'VintageTalk\helper-cfg.json'
 $DESK = [Environment]::GetFolderPath('Desktop')
@@ -71,6 +71,14 @@ function Handle($method, $path, $j) {
     $r = Call-Uia @{ cmd = 'ping' } 20; if (-not $r.ok) { return @{ ok = $false; msg = [string]$r.msg } }
     return @{ ok = $true; ver = [string]$r.ver; wins = [int]$r.wins; ready = ([double]$r.ver -ge 1.3) }
   }
+  if ($path -like '/withu/who*') {   # 1.3(11/26): 지금 위드유에 로그인한 계정 — 위드유 맨 아래 상태줄 「ID: ○ 유저명: ○」을 읽기만(누르지 않음)
+    $w = Call-Uia @{ cmd = 'wins' } 20; if (-not $w.ok) { return @{ ok = $false; msg = [string]$w.msg } }
+    $all = @($w.wins); $main = @($all | Where-Object { [string]$_.c -eq 'TfLM0002' })[0]
+    if (-not $main) { return @{ ok = $true; open = ($all.Count -gt 0); login = (@($all | Where-Object { [string]$_.c -eq 'TfLogin' }).Count -gt 0); id = ''; user = '' } }
+    $t = Call-Uia @{ cmd = 'tree'; win = [int]$main.i; max = 200 } 30; if (-not $t.ok) { return @{ ok = $false; msg = [string]$t.msg } }
+    foreach ($e in @($t.els)) { $m = [regex]::Match([string]$e.n, 'ID:\s*(\S+)\s+유저명:\s*(\S+)'); if ($m.Success) { Write-Log ('위드유 계정 읽음: ' + $m.Groups[1].Value); return @{ ok = $true; open = $true; login = $false; id = $m.Groups[1].Value; user = $m.Groups[2].Value } } }
+    return @{ ok = $true; open = $true; login = $false; id = ''; user = ''; msg = '위드유 상태줄에서 로그인 계정을 못 찾았어요.' }
+  }
   if ($path -like '/withu/gen*') {   # 엑셀을 일할 폴더에 두고 → 불러오기 · 택배정보생성 → 위드유가 만든 결과 엑셀을 돌려줌
     $name = Safe-Name ([string]$j.name); if ($name -notmatch '\.xls$') { return @{ ok = $false; step = 'gen'; msg = '위드유에는 .xls 파일만 넣어요.' } }
     $bytes = [Convert]::FromBase64String([string]$j.b64); if ($bytes.Length -gt 8000000) { return @{ ok = $false; step = 'gen'; msg = '파일이 너무 커요(8MB까지).' } }
@@ -92,6 +100,17 @@ function Handle($method, $path, $j) {
     $r = Call-Uia @{ cmd = 'ship2'; cha = $cha } 420
     if (-not $r.ok) { Write-Log ('위드유 출력 멈춤(인쇄): ' + [string]$r.msg); return @{ ok = $false; step = 'print'; msg = [string]$r.msg } }
     Write-Log ('바로 인쇄 끝: ' + $cha + '차 · 표에서 본 줄 ' + [string]$r.seen); return @{ ok = $true; cha = $cha; seen = [int]$r.seen }
+  }
+  if ($path -like '/aligo*') {   # 1.3(11/26): 문자보내기 — 알리고는 등록한 IP에서만 받아서(작업실 서버 = 구글은 IP가 바뀜) 이 PC(사무실 IP)에서 대신 보냄. 정해진 알리고 주소 네 개만 · 받은 답을 그대로 돌려줌 · 기록엔 주소 · 글자 수만(번호 · 글 · 키 안 남김)
+    $ap = [string]$j.path; if (@('/send/', '/remain/', '/list/', '/sms_list/') -notcontains $ap) { return @{ ok = $false; msg = '알리고 주소가 이상해요.'; _code = 400 } }
+    $pairs = @(); if ($j.form) { foreach ($p in $j.form.PSObject.Properties) { $pairs += ([Uri]::EscapeDataString([string]$p.Name) + '=' + [Uri]::EscapeDataString([string]$p.Value)) } }
+    $bytes = [Text.Encoding]::UTF8.GetBytes(($pairs -join '&'))
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $wc = New-Object Net.WebClient; $wc.Headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+    try { $resp = $wc.UploadData('https://apis.aligo.in' + $ap, 'POST', $bytes); $txt = [Text.Encoding]::UTF8.GetString($resp) }
+    catch { Write-Log ('알리고 못 닿음: ' + $ap + ' ' + $_.Exception.Message); return @{ ok = $false; msg = '알리고에 못 닿았어요: ' + $_.Exception.Message } }
+    finally { $wc.Dispose() }
+    Write-Log ('알리고 ' + $ap + ' 답 ' + $txt.Length + '자'); return @{ ok = $true; text = $txt }
   }
   return $null
 }
